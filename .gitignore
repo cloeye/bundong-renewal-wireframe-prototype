@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Source/reference documents not needed for GitHub Pages
+*.pptx
+*.pdf
+PROJECT_CONTEXT.md
+
+# Local/dev artifacts
+node_modules/
+.env
