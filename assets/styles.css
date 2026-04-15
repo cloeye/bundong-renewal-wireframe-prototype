@@ -6152,6 +6152,281 @@ dd {
   }
 }
 
+/* Church facility: approved wireframe structure */
+.facility-intro-panel .church-landing-hero__copy h2 {
+  max-width: 640px;
+  font-size: clamp(38px, 4.6vw, 62px) !important;
+  line-height: 1.08 !important;
+}
+
+.facility-space-panel .section-head,
+.facility-cafe-panel .section-head,
+.facility-visit-panel .section-head {
+  margin-bottom: clamp(30px, 4vw, 46px);
+}
+
+.facility-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.subpage-content .facility-overview {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.86fr) minmax(0, 1.14fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: clamp(24px, 4vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.subpage-content .facility-overview__media {
+  min-height: 280px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.09)),
+    repeating-linear-gradient(135deg, #eeeeee 0, #eeeeee 14px, #e3e3e3 14px, #e3e3e3 28px);
+  color: #777777;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.subpage-content .facility-overview__body h3 {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.16;
+  letter-spacing: -0.06em;
+}
+
+.subpage-content .facility-overview__body p {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.subpage-content .facility-floor-list {
+  display: grid;
+  gap: 8px;
+}
+
+.subpage-content .facility-floor-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background: #f8f8f8;
+  font-size: 15px;
+}
+
+.subpage-content .facility-floor-item.is-worship {
+  border-color: #cfcfcf;
+  background: #eeeeee;
+}
+
+.subpage-content .facility-floor-item strong {
+  display: block;
+  min-width: 0;
+  margin-right: 0;
+  color: #333333;
+  font-size: 15px;
+  font-weight: 950;
+}
+
+.subpage-content .facility-floor-item.is-worship strong::after {
+  content: "*";
+  margin-left: 2px;
+  color: #555555;
+}
+
+.subpage-content .facility-floor-item span {
+  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 1.45;
+  font-weight: 720;
+}
+
+.facility-floor-note {
+  margin: 14px 0 0 !important;
+  color: #777777 !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  font-weight: 700 !important;
+}
+
+.facility-cafe-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.facility-cafe-photo,
+.facility-cafe-copy {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.facility-cafe-photo {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.09)),
+    repeating-linear-gradient(135deg, #eeeeee 0, #eeeeee 14px, #e3e3e3 14px, #e3e3e3 28px);
+  color: #777777;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.facility-cafe-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(28px, 4vw, 44px);
+}
+
+.facility-cafe-copy h3 {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: clamp(28px, 3.3vw, 42px);
+  line-height: 1.14;
+  letter-spacing: -0.06em;
+}
+
+.facility-cafe-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.75;
+  font-weight: 720;
+}
+
+.facility-cafe-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.facility-cafe-points span {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f7f7f7;
+  color: #444444;
+  font-size: 14px;
+  font-weight: 850;
+  text-align: center;
+}
+
+.facility-visit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.facility-visit-card {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.facility-visit-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 22px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #f2f2f2;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.facility-visit-card h3 {
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 23px;
+  line-height: 1.25;
+  letter-spacing: -0.055em;
+}
+
+.facility-visit-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+  font-weight: 700;
+}
+
+.facility-info-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.facility-info-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #3f3f3f;
+  font-size: 14px;
+  line-height: 1.55;
+  font-weight: 760;
+}
+
+.facility-info-list span {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.facility-visit-card a {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  padding: 0 15px;
+  border: 1px solid #555555;
+  border-radius: 999px;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+@media (max-width: 980px) {
+  .subpage-content .facility-overview,
+  .facility-cafe-grid,
+  .facility-cafe-points,
+  .facility-visit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Anniversary landing page */
 .anniversary-dot-nav {
   position: sticky;

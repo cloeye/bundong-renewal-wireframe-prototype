@@ -1801,56 +1801,102 @@ function renderChurchFacilityPage() {
   const source = data.pages.church;
   const page = getNavItem('church/facility');
   const content = `
-      <section class="panel facility-intro-panel">
-        ${sectionTitle('Facility', '시설안내', '처음 방문하시는 분도 예배와 모임 공간을 쉽게 찾을 수 있도록 주요 공간을 정리합니다.')}
-        <div class="facility-hero-grid">
-          <div class="placeholder-box tall">본관 외관 대표 사진</div>
-          <div class="placeholder-box tall">선교교육관 대표 사진</div>
+      <section class="church-landing-hero panel facility-intro-panel">
+        <div class="church-landing-hero__media">본관 또는 교회 전경 사진 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01 시설 안내</span>
+          <h2>우리교회 공간을 소개합니다</h2>
+          <div class="church-landing-hero__intro">
+            <p>예배와 모임이 이루어지는 주요 공간은 본관과 (선교)교육관으로 나누어져 있습니다.</p>
+          </div>
         </div>
       </section>
-      <section class="panel">
-        ${sectionTitle('Buildings', '공간별 안내')}
+      <section class="panel facility-space-panel">
+        <div class="section-head section-head-center">
+          <div>
+            <span class="eyebrow">SEC-02 공간별 안내</span>
+            <h2>예배와 모임의 공간</h2>
+          </div>
+        </div>
         <div class="facility-stack">
           ${source.facilities.map((item, index) => `
-            <article class="card facility-overview">
-              <div class="placeholder-box facility-overview__media">${escapeHtml(item.title)} 사진 / 조감도</div>
+            <article class="facility-overview">
+              <div class="facility-overview__media">${escapeHtml(item.title)} 사진 / 조감도 영역</div>
               <div class="facility-overview__body">
-                <span class="eyebrow">${index === 0 ? 'Main Building' : 'Education Center'}</span>
                 <h3>${escapeHtml(item.title)}</h3>
                 <p>${index === 0 ? '주일예배, 행정, 교제와 본당 중심의 교회 메인 공간입니다.' : '교회학교와 교육, 새가족 과정, 소그룹 모임을 위한 교육 중심 공간입니다.'}</p>
                 <div class="facility-floor-list">
                   ${item.floors.map((floor) => {
                     const [level, ...rest] = floor.split(' ');
+                    const floorText = index === 0 && level === '4F' ? '본당 · 새가족 등록 데스크' : rest.join(' ');
+                    const isWorship = index === 0 && (level === '3F' || level === '4F');
                     return `
-                      <div class="facility-floor-item">
+                      <div class="facility-floor-item ${isWorship ? 'is-worship' : ''}">
                         <strong>${escapeHtml(level)}</strong>
-                        <span>${escapeHtml(rest.join(' '))}</span>
+                        <span>${escapeHtml(floorText)}</span>
                       </div>
                     `;
                   }).join('')}
                 </div>
+                ${index === 0 ? '<p class="facility-floor-note">* 예배가 드려지는 주요 예배실입니다.</p>' : ''}
               </div>
             </article>
           `).join('')}
         </div>
       </section>
-      <section class="panel">
-        ${sectionTitle('Guide', '처음 방문자를 위한 동선')}
-        <div class="grid grid-3">
-          <article class="card">
-            <div class="placeholder-box small">예배 동선 사진</div>
-            <h3>예배실 찾기</h3>
-            <p>본당, 교육부서 예배실, 청년예배 공간을 목적별로 빠르게 확인합니다.</p>
-          </article>
-          <article class="card">
-            <div class="placeholder-box small">안내 데스크 사진</div>
+      <section class="panel facility-cafe-panel">
+        <div class="section-head section-head-center">
+          <div>
+            <span class="eyebrow">SEC-03 카페헤븐</span>
+            <h2>함께 머무는 교제의 공간</h2>
+          </div>
+        </div>
+        <div class="facility-cafe-grid">
+          <div class="facility-cafe-photo">카페헤븐 사진 영역</div>
+          <div class="facility-cafe-copy">
+            <h3>카페헤븐</h3>
+            <p>본관 2층에 위치한 카페헤븐은 예배 전후 성도들이 자연스럽게 머물고 교제하는 공간입니다. 새가족 만남, 소그룹 모임, 주일의 쉼이 이어지는 열린 공간으로 안내합니다.</p>
+            <div class="facility-cafe-points">
+              <span>본관 2층</span>
+              <span>교제 공간</span>
+              <span>새가족 만남</span>
+            </div>
+            <div class="facility-info-list">
+              <div><span>운영시간</span><strong>주일 예배 전후</strong></div>
+              <div><span>위치</span><strong>본관 2층</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="panel facility-visit-panel">
+        <div class="section-head section-head-center">
+          <div>
+            <span class="eyebrow">SEC-04 방문 동선</span>
+            <h2>처음 오시는 분을 위해</h2>
+          </div>
+        </div>
+        <div class="facility-visit-grid">
+          <article class="facility-visit-card">
+            <div class="facility-visit-icon">01</div>
             <h3>문의와 안내</h3>
-            <p>새가족 안내, 사무실, 카페 등 처음 방문자가 찾는 공간을 묶어 안내합니다.</p>
+            <p>방문 전 궁금한 내용은 교회 사무실로 문의하실 수 있습니다.</p>
+            <div class="facility-info-list">
+              <div><span>전화</span><strong>02-000-0000</strong></div>
+              <div><span>운영시간</span><strong>화-금 09:00-17:00</strong></div>
+              <div><span>주일 안내</span><strong>예배 전후 안내 데스크</strong></div>
+            </div>
           </article>
-          <article class="card">
-            <div class="placeholder-box small">주차 / 출입구 사진</div>
-            <h3>주차와 출입</h3>
-            <p>주차장, 출입구, 엘리베이터 동선을 오시는 길 페이지와 연결합니다.</p>
+          <article class="facility-visit-card">
+            <div class="facility-visit-icon">02</div>
+            <h3>차량운행안내</h3>
+            <p>예배 전후 운행되는 차량 노선과 시간을 확인합니다.</p>
+            <a href="${routeHref('worship/shuttle')}">자세히 보기</a>
+          </article>
+          <article class="facility-visit-card">
+            <div class="facility-visit-icon">03</div>
+            <h3>오시는 길</h3>
+            <p>주소, 지도, 대중교통, 주차 정보를 한 화면에서 확인합니다.</p>
+            <a href="${routeHref('church/directions')}">자세히 보기</a>
           </article>
         </div>
       </section>
