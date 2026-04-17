@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>교회조직 임시 시안 | 번동제일교회</title>
+  <link rel="stylesheet" href="../assets/styles.css?v=20260413-109">
+  <style>
+    body { background: #efefef; }
+    .draft-shell { padding: 0 0 72px; }
+    .draft-header { border-bottom: 1px solid var(--line); background: #ffffff; }
+    .draft-header__inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .draft-header strong { display: block; font-size: 22px; letter-spacing: -0.04em; }
+    .draft-header span { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .draft-note {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #555555;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .organization-hero-panel .church-landing-hero__copy h2 {
+      max-width: 660px;
+      font-size: clamp(38px, 4.6vw, 62px) !important;
+      line-height: 1.08 !important;
+    }
+    .organization-section-nav {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .organization-section-nav a {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: #333333;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+    }
+    .organization-section-nav span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+    .organization-rhythm .section-head { margin-bottom: clamp(30px, 4vw, 46px); }
+    .organization-governance-grid,
+    .organization-unit-grid,
+    .organization-age-grid,
+    .organization-youth-grid,
+    .organization-choir-grid,
+    .organization-parish-summary {
+      display: grid;
+      gap: 12px;
+    }
+    .organization-governance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .organization-unit-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .organization-age-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .organization-youth-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .organization-choir-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .organization-parish-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; }
+    .organization-card,
+    .organization-unit-card,
+    .organization-age-card,
+    .organization-parish-card,
+    .organization-list-details,
+    .organization-name-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+    .organization-card,
+    .organization-unit-card,
+    .organization-age-card,
+    .organization-name-panel,
+    .organization-parish-summary div { padding: 22px; }
+    .organization-card small,
+    .organization-unit-card small,
+    .organization-age-card span,
+    .organization-name-panel small,
+    .organization-parish-summary span,
+    .organization-parish-region {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+    .organization-card h3,
+    .organization-unit-card h3,
+    .organization-name-panel h3,
+    .organization-parish-card h3 {
+      margin: 8px 0 10px;
+      color: var(--text);
+      font-size: clamp(22px, 2.2vw, 30px);
+      line-height: 1.18;
+      letter-spacing: -0.06em;
+    }
+    .organization-card p,
+    .organization-unit-card p,
+    .organization-name-panel p,
+    .organization-parish-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.72;
+      font-weight: 720;
+    }
+    .organization-unit-card strong,
+    .organization-age-card strong,
+    .organization-parish-summary strong {
+      display: block;
+      color: #222222;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: -0.055em;
+    }
+    .organization-unit-card strong { margin-bottom: 8px; }
+    .organization-age-card strong { margin-bottom: 8px; font-size: 22px; }
+    .organization-unit-card em {
+      display: block;
+      margin-top: 12px;
+      color: #555555;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 850;
+    }
+    .organization-unit-card.is-featured { background: #f5f5f5; box-shadow: inset 0 3px 0 #999999; }
+    .organization-list-details {
+      margin-top: 18px;
+      overflow: hidden;
+    }
+    .organization-list-details summary {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 20px;
+      cursor: pointer;
+      color: #333333;
+      font-size: 16px;
+      font-weight: 900;
+      list-style: none;
+    }
+    .organization-list-details summary::-webkit-details-marker { display: none; }
+    .organization-list-details summary::after {
+      content: "+";
+      color: var(--muted);
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .organization-list-details[open] summary::after { content: "-"; }
+    .organization-name-list {
+      display: grid;
+      gap: 0;
+      padding: 0 20px 20px;
+    }
+    .organization-name-row {
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr);
+      gap: 18px;
+      padding: 14px 0;
+      border-top: 1px solid #eeeeee;
+      color: #333333;
+      font-size: 14px;
+      line-height: 1.65;
+      font-weight: 720;
+    }
+    .organization-name-row strong {
+      color: #222222;
+      font-weight: 950;
+    }
+    .organization-feature-split {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .organization-feature-lead {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .organization-feature-lead span,
+    .organization-parish-region {
+      display: inline-grid;
+      place-items: center;
+      width: fit-content;
+      min-width: 44px;
+      height: 32px;
+      margin-bottom: 18px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f2f2f2;
+      color: #555555;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+    }
+    .organization-youth-grid,
+    .organization-choir-grid { margin-top: 18px; }
+    .organization-choir-grid .organization-name-panel h3 { font-size: 21px; }
+    .organization-photo {
+      min-height: 150px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.09)),
+        repeating-linear-gradient(135deg, #eeeeee 0, #eeeeee 14px, #e3e3e3 14px, #e3e3e3 28px);
+      color: #777777;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .organization-photo.is-wide {
+      min-height: 320px;
+      margin-bottom: 0;
+    }
+    .organization-photo.is-small {
+      min-height: 118px;
+    }
+    .organization-governance-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #eeeeee;
+    }
+    .organization-governance-list div {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 10px;
+      color: #333333;
+      font-size: 14px;
+      line-height: 1.55;
+      font-weight: 760;
+    }
+    .organization-governance-list strong {
+      color: #666666;
+      font-weight: 900;
+    }
+    .organization-definition {
+      margin-top: 12px !important;
+      padding-top: 12px;
+      border-top: 1px solid #eeeeee;
+      color: #555555 !important;
+      font-size: 13px !important;
+      line-height: 1.65 !important;
+    }
+    .organization-youth-feature {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .organization-parish-list { display: grid; gap: 12px; }
+    .organization-parish-card {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+      padding: 22px 24px;
+    }
+    .organization-parish-card > strong {
+      color: #303030;
+      font-size: 23px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+    .organization-parish-card ul,
+    .organization-name-panel ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .organization-parish-card li,
+    .organization-name-panel li {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 11px;
+      border: 1px solid #dddddd;
+      border-radius: 999px;
+      background: #f7f7f7;
+      color: #444444;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .organization-cafe-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      margin-top: 14px;
+      padding: 0 12px;
+      border: 1px solid #777777;
+      border-radius: 999px;
+      color: #333333;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .draft-footer {
+      width: min(1180px, calc(100% - 32px));
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    @media (max-width: 980px) {
+      .draft-header__inner { align-items: flex-start; flex-direction: column; }
+      .organization-section-nav,
+      .organization-governance-grid,
+      .organization-unit-grid,
+      .organization-age-grid,
+      .organization-youth-grid,
+      .organization-choir-grid,
+      .organization-youth-feature,
+      .organization-feature-split,
+      .organization-parish-summary,
+      .organization-parish-card,
+      .organization-name-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="draft-shell">
+    <header class="draft-header">
+      <div class="draft-header__inner">
+        <div>
+          <strong>번동제일교회 리뉴얼 와이어프레임</strong>
+          <span>교회조직 임시 시안 · 실제 페이지 적용 전 확인용</span>
+        </div>
+        <div class="draft-note">TEMP HTML</div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="subpage-hero subpage-hero--integrated panel">
+        <div class="subpage-hero__copy">
+          <div class="subpage-category-path subpage-category-path--simple">
+            <span class="subpage-category-home">번동제일교회는</span>
+            <span class="subpage-category-separator">/</span>
+            <span class="subpage-category-current is-leaf">교회조직</span>
+          </div>
+          <h1>교회조직</h1>
+          <p>부서소개와 교구소개를 한 화면에서 찾을 수 있도록 정리한 안내 화면입니다.</p>
+        </div>
+        <div class="subpage-hero__media placeholder-box">교회 조직 대표 영역</div>
+      </section>
+
+      <nav class="subpage-line-tabs" aria-label="번동제일교회는 하위 메뉴">
+        <div class="subpage-line-tabs__inner">
+          <a href="../index.html#/church">우리교회는</a>
+          <a href="../index.html#/church/history">걸어온길</a>
+          <a href="../index.html#/church/facility">시설안내</a>
+          <a class="is-current" href="./church-organization-temp.html">교회조직</a>
+          <a href="../index.html#/church/staff">섬기는 사람들</a>
+          <a href="../index.html#/church/directions">오시는 길</a>
+        </div>
+      </nav>
+
+      <div class="subpage-content">
+        <section class="church-landing-hero panel organization-hero-panel">
+          <div class="church-landing-hero__media">조직 흐름 요약 영역</div>
+          <div class="church-landing-hero__copy">
+            <span class="eyebrow">SEC-01 교회조직</span>
+            <h2>교회의 구조와 공동체를 한눈에</h2>
+            <div class="church-landing-hero__intro">
+              <p>교회 운영 구조는 간결하게, 부서와 교구 정보는 필요한 이름까지 확인할 수 있게 정리합니다.</p>
+            </div>
+            <div class="organization-section-nav" aria-label="교회조직 주요 섹션 이동">
+              <a href="#section-departments">부서소개 <span>조직과 사역</span></a>
+              <a href="#section-parishes">교구소개 <span>지역과 돌봄</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section id="section-departments" class="panel organization-rhythm">
+          <div class="section-head section-head-center">
+            <div>
+              <span class="eyebrow">SEC-02 상위 조직</span>
+              <h2>교회 조직</h2>
+            </div>
+          </div>
+          <div class="organization-governance-grid">
+            <article class="organization-card">
+              <small>01</small>
+              <h3>공동의회</h3>
+              <p>교회의 중요한 의사를 함께 확인하고 결정하는 회의입니다.</p>
+              <div class="organization-governance-list">
+                <div><strong>의장</strong><span>황대석 목사</span></div>
+                <div><strong>서기</strong><span>최병욱 장로</span></div>
+                <div><strong>회원</strong><span>무흠 입교인</span></div>
+              </div>
+              <p class="organization-definition">무흠 입교인은 교회 공동체 안에서 책벌 중이 아니며 공동의회 회원 자격을 가진 입교인을 뜻합니다.</p>
+            </article>
+            <article class="organization-card">
+              <small>02</small>
+              <h3>당회</h3>
+              <p>목회와 행정의 주요 방향을 살피고 교회의 질서를 세웁니다.</p>
+              <div class="organization-governance-list">
+                <div><strong>담임</strong><span>황대석 목사</span></div>
+                <div><strong>시무</strong><span>이선규A, 이선규B, 최병욱, 이현우, 안동찬, 홍도희, 이호철, 조계완, 서현철, 김희진, 최상균 장로</span></div>
+              </div>
+            </article>
+            <article class="organization-card">
+              <small>03</small>
+              <h3>제직회</h3>
+              <p>각 부서와 사역이 실제로 움직이도록 실행과 운영을 맡습니다.</p>
+              <div class="organization-governance-list">
+                <div><strong>구성</strong><span>목사, 장로, 안수집사, 권사, 집사 등 제직</span></div>
+                <div><strong>실행</strong><span>예배부, 찬양부, 서무부, 총무부, 재정부, 관리부, 봉사부, 교육부, 전도부 등</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel organization-rhythm">
+          <div class="section-head section-head-center">
+            <div>
+              <span class="eyebrow">SEC-04 교육부</span>
+              <h2>교육부</h2>
+            </div>
+          </div>
+          <div class="organization-age-grid">
+            <article class="organization-age-card"><div class="organization-photo is-small">영아부 사진 영역</div><strong>영아부</strong><span>0세-3세 / 주일 09:30 / 본관 영아부실</span><a class="organization-cafe-link" href="https://cafe.naver.com/bundonginfant" target="_blank" rel="noopener">카페 바로가기</a></article>
+            <article class="organization-age-card"><div class="organization-photo is-small">유아부 사진 영역</div><strong>유아부</strong><span>4세-5세 / 주일 09:30 / 교육관 유아부실</span><a class="organization-cafe-link" href="https://cafe.daum.net/bundongbaby" target="_blank" rel="noopener">카페 바로가기</a></article>
+            <article class="organization-age-card"><div class="organization-photo is-small">유치부 사진 영역</div><strong>유치부</strong><span>6세-7세 / 주일 09:30 / 교육관 유치부실</span></article>
+            <article class="organization-age-card"><div class="organization-photo is-small">유년부 사진 영역</div><strong>유년부</strong><span>초등 1-3학년 / 주일 09:30 / 유년부실</span></article>
+            <article class="organization-age-card"><div class="organization-photo is-small">초등부 사진 영역</div><strong>초등부</strong><span>초등 4-6학년 / 주일 09:30 / 초등부실</span></article>
+            <article class="organization-age-card"><div class="organization-photo is-small">청소년부 사진 영역</div><strong>청소년부</strong><span>중학생-고등학생 / 주일 09:30 / 본관 중예배실</span></article>
+          </div>
+        </section>
+
+        <section class="panel organization-rhythm">
+          <div class="section-head section-head-center">
+            <div>
+              <span class="eyebrow">SEC-05 청년부</span>
+              <h2>청년부</h2>
+            </div>
+          </div>
+          <div class="organization-youth-feature">
+            <div class="organization-photo is-wide">청년부 예배 사진 영역</div>
+            <div class="organization-youth-grid">
+              <article class="organization-name-panel">
+                <small>예배</small>
+                <h3>주일4부 청년예배</h3>
+                <p>예배와 삶의 온전함이 회복되는 공동체를 지향합니다.</p>
+              </article>
+              <article class="organization-name-panel">
+                <small>말씀</small>
+                <h3>로마서 12:1-2</h3>
+                <p>기존 청년부 소개의 핵심 말씀을 별도 섹션으로 살립니다.</p>
+              </article>
+              <article class="organization-name-panel">
+                <small>안내</small>
+                <h3>예배시간과 장소</h3>
+                <p>주일 오후 1:30, 본관 중예배실에서 청년예배로 모입니다.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel organization-rhythm">
+          <div class="section-head section-head-center">
+            <div>
+              <span class="eyebrow">SEC-06 찬양대</span>
+              <h2>찬양대</h2>
+            </div>
+          </div>
+          <div class="organization-choir-grid">
+            <article class="organization-name-panel"><div class="organization-photo is-small">시온 찬양대 사진 영역</div><small>찬양대</small><h3>시온 찬양대</h3><p>대장 노승구 안수집사 / 지휘 김안국 안수집사</p></article>
+            <article class="organization-name-panel"><div class="organization-photo is-small">호산나 찬양대 사진 영역</div><small>찬양대</small><h3>호산나 찬양대</h3><p>대장 강환범 안수집사 / 지휘 조미라 선생</p></article>
+            <article class="organization-name-panel"><div class="organization-photo is-small">브니엘 찬양대 사진 영역</div><small>찬양대</small><h3>브니엘 찬양대</h3><p>대장 김길례 권사 / 지휘 오정근 선생</p></article>
+            <article class="organization-name-panel"><div class="organization-photo is-small">아가페 찬양대 사진 영역</div><small>찬양대</small><h3>아가페 찬양대</h3><p>대장 조문순 권사 / 지휘 이광옥 권사</p></article>
+          </div>
+          <details class="organization-list-details">
+            <summary>찬양대와 찬양단 명단 확인</summary>
+            <div class="organization-name-list">
+              <div class="organization-name-row"><strong>시온 찬양대</strong><span>대장 노승구 안수집사 / 부대장 홍태봉 권사, 박용욱 집사 / 지휘 김안국 안수집사 / 반주 변시온 권사, 신예은 선생</span></div>
+              <div class="organization-name-row"><strong>호산나 찬양대</strong><span>대장 강환범 안수집사 / 부대장 최재훈 안수집사, 소완식 권사 / 지휘 조미라 선생 / 반주 이준연 선생, 안희정 선생</span></div>
+              <div class="organization-name-row"><strong>브니엘 찬양대</strong><span>대장 김길례 권사 / 부대장 김영찬 안수집사, 김수현 집사 / 지휘 오정근 선생 / 반주 전익덕 집사, 심지현 선생</span></div>
+              <div class="organization-name-row"><strong>아가페 찬양대</strong><span>대장 조문순 권사 / 부대장 류명곤 협권, 차태숙 권사 / 지휘 이광옥 권사 / 반주 이은진 선생, 이성진 선생</span></div>
+              <div class="organization-name-row"><strong>삼마 중창단</strong><span>단장 김양호 안수집사 / 지도 김안국 안수집사 / 리더 서현철 장로 / 반장 신예은 선생</span></div>
+              <div class="organization-name-row"><strong>임마누엘 중창단</strong><span>단장 마경선 권사 / 지도·반주 오지현 집사</span></div>
+              <div class="organization-name-row"><strong>미리암찬양단</strong><span>단장 김영의 권사 / 지도 김성미 권사 / 반주 민혜경 권사</span></div>
+              <div class="organization-name-row"><strong>프레이즈 찬양단</strong><span>단장 노소은 권사 / 부단장 옥동녀 권사 / 지도 남주애 권사</span></div>
+              <div class="organization-name-row"><strong>쉐마찬양단</strong><span>단장 김성미 권사 / 부단장 박갑순 권사</span></div>
+              <div class="organization-name-row"><strong>쉐카이나찬양단</strong><span>단장 최강산 안수집사 / 리더 김성림 전도사</span></div>
+              <div class="organization-name-row"><strong>프레이즈 앙상블</strong><span>단장 김대일 안수집사 / 부단장 한희 권사, 이건희 집사 / 지도 김안국 안수집사 / 악장 심예슬 선생</span></div>
+              <div class="organization-name-row"><strong>프레이즈 율동단</strong><span>단장·지도 강순옥 은퇴장로</span></div>
+              <div class="organization-name-row"><strong>두나미스찬양단</strong><span>단장 강신일 목사</span></div>
+            </div>
+          </details>
+        </section>
+
+        <section class="panel organization-rhythm">
+          <div class="section-head section-head-center">
+            <div>
+              <span class="eyebrow">SEC-03 부서조직</span>
+              <h2>부서소개 전체보기</h2>
+            </div>
+          </div>
+          <div class="organization-unit-grid">
+            <article class="organization-unit-card is-featured"><strong>예배부</strong><small>예배와 성례, 안내</small><em>부장 이현우 장로</em></article>
+            <article class="organization-unit-card is-featured"><strong>찬양부</strong><small>찬양대와 찬양 사역</small><em>부장 이현우 장로</em></article>
+            <article class="organization-unit-card"><strong>서무부</strong><small>교직원, 문서, 기록</small><em>부장 홍도희 장로</em></article>
+            <article class="organization-unit-card"><strong>총무부</strong><small>행사와 운영 지원</small><em>부장 홍도희 장로</em></article>
+            <article class="organization-unit-card"><strong>재정부</strong><small>수입, 지출, 예결산</small><em>부장 이호철 장로</em></article>
+            <article class="organization-unit-card"><strong>관리부</strong><small>시설, 비품, 안전</small><em>부장 김희진 장로</em></article>
+            <article class="organization-unit-card"><strong>봉사부</strong><small>급식, 행사, 환경</small><em>부장 이호철 장로</em></article>
+            <article class="organization-unit-card"><strong>미화부</strong><small>청소와 환경관리</small><em>부장 최병욱 장로</em></article>
+            <article class="organization-unit-card"><strong>감사부</strong><small>재정과 운영 감사</small><em>부장 서현철 장로</em></article>
+            <article class="organization-unit-card is-featured"><strong>새가족부</strong><small>등록과 정착 안내</small><em>부장 조계완 장로</em></article>
+            <article class="organization-unit-card is-featured"><strong>교육부</strong><small>교회학교와 양육</small><em>부장 안동찬 장로</em></article>
+            <article class="organization-unit-card"><strong>전도부</strong><small>전도와 교구 협력</small><em>부장 이선규A 장로</em></article>
+            <article class="organization-unit-card"><strong>세계선교부</strong><small>국내외 선교 지원</small><em>부장 홍도희 장로</em></article>
+            <article class="organization-unit-card"><strong>체육부</strong><small>체육과 친교 활동</small><em>부장 최상균 장로</em></article>
+            <article class="organization-unit-card"><strong>차량부</strong><small>차량 운행과 주차</small><em>부장 김희진 장로</em></article>
+            <article class="organization-unit-card"><strong>홍보영상부</strong><small>영상, 사진, 기록</small><em>부장 이선규A 장로</em></article>
+            <article class="organization-unit-card"><strong>문화선교부</strong><small>카페, 문화, 지역</small><em>부장 최상균 장로</em></article>
+            <article class="organization-unit-card"><strong>경조부</strong><small>장례와 경조 지원</small><em>부장 이선규A 장로</em></article>
+            <article class="organization-unit-card"><strong>사회부</strong><small>구제와 지역 섬김</small><em>부장 조계완 장로</em></article>
+          </div>
+          <details class="organization-list-details">
+            <summary>부서별 명단 확인</summary>
+            <div class="organization-name-list">
+              <div class="organization-name-row"><strong>예배부</strong><span>부장 이현우 장로 / 안수집사 구형모 류희석 송기춘 이재호 최강산 / 권사 강효순 유호복 황혜선</span></div>
+              <div class="organization-name-row"><strong>찬양부</strong><span>부장 이현우 장로 / 안수집사 노승구(시온) 강환범(호산나) / 권사 김길례(브니엘) 조문순(아가페)</span></div>
+              <div class="organization-name-row"><strong>서무부</strong><span>부장 홍도희 장로 / 안수집사 김정훈 서진모 정영권 / 권사 김영의 김은경C 유은주 윤미자 이정열 최정례</span></div>
+              <div class="organization-name-row"><strong>총무부</strong><span>부장 홍도희 장로 / 안수집사 김승식 서정수 서춘석 우일균 최재훈 / 권사 김미경 김선희A 김정이 유효순 육복임 이성희 장은영 조국상</span></div>
+              <div class="organization-name-row"><strong>재정부</strong><span>부장 이호철 장로 / 안수집사 김용현 안태석 정윤화 / 권사 민성순 고은경 박옥순 이혜영 최영복B</span></div>
+              <div class="organization-name-row"><strong>관리부</strong><span>부장 김희진 장로 / 안수집사 강정학 김원석 서진모 안태석 윤승호 이효민 최재훈 / 권사 김영이 김해욱 박연숙 오금자 옥동녀 이혜영 장귀애 차태숙 최윤숙 황정희 한희</span></div>
+              <div class="organization-name-row"><strong>봉사부</strong><span>부장 이호철 장로 / 안수집사 김승식 박성종 서정근 이성규A 이시형 임형진 / 권사 김정옥B 김해욱 박미영 양경미 옥형미</span></div>
+              <div class="organization-name-row"><strong>미화부</strong><span>부장 최병욱 장로 / 권사 민혜경 박종림 한희 / 협권 류명곤 / 집사 김성금 이순오 함수정 최윤영 최은하 황윤영</span></div>
+              <div class="organization-name-row"><strong>감사부</strong><span>부장 서현철 장로 / 안수집사 강정학 노승구 지승근 주정식 / 권사 양경숙 오미숙 / 집사 김기은 김현정 안해란</span></div>
+              <div class="organization-name-row"><strong>새가족부</strong><span>부장 조계완 장로 / 안수집사 김경호 김영석 노성래 윤승호 임형진 / 권사 강효순 김명숙C 김정섭 김태경 박금희 조숙연 최영희 황정희 / 집사 전미라</span></div>
+              <div class="organization-name-row"><strong>교육부</strong><span>부장 안동찬 장로 / 안수집사 김대일 김영태 윤승호 최강산 최대성 / 권사 김명숙C 김명옥 김정섭 정수현 조숙연</span></div>
+              <div class="organization-name-row"><strong>전도부</strong><span>부장 이선규A 장로 / 안수집사 김양호 박성종 서정근 윤승호 임동섭 임형진 / 권사 김길례 나승초 박갑순 박경화 양경미 이명애 이정열 정수현 조국상 최윤숙 최태정 허해경 / 교구·구역회장</span></div>
+              <div class="organization-name-row"><strong>세계선교부</strong><span>부장 홍도희 장로 / 안수집사 강환범 서진모 윤승호 주정식 / 권사 김순례 남주애 박종림 박향덕 유정순 이미정 이옥란 조숙연 허해경</span></div>
+              <div class="organization-name-row"><strong>체육부</strong><span>부장 최상균 장로 / 안수집사 김영찬 김용현 김원석 박성종 송기춘 유동훈 유효경 이효민 정영권 정윤화 최대성 최순신 / 집사 김원민 김재엽 박용욱 손보명 김인숙D 임미경 안해란 진소희 / 권사 김경희 박향덕 양경숙 오선숙 노흥미 채수남 / 교구·구역회장</span></div>
+              <div class="organization-name-row"><strong>차량부</strong><span>부장 김희진 장로 / 안수집사 서춘석 이성규A 박성종</span></div>
+              <div class="organization-name-row"><strong>홍보영상부</strong><span>부장 이선규A 장로 / 안수집사 서진모 이효민 임형진 정윤화 / 권사 나승초 박영애 오미숙 함광숙</span></div>
+              <div class="organization-name-row"><strong>문화선교부</strong><span>부장 최상균 장로 / 안수집사 유효경 김원석 유동훈 / 권사 김정이 양경미 양경숙 조문순 / 집사 김인숙D 손보명</span></div>
+              <div class="organization-name-row"><strong>경조부</strong><span>부장 이선규A 장로 / 안수집사 김석은 김양호 노승구 이성규A 이효민 임동섭 / 권사 김명희 김성미 김순례 박미영 / 각 교구 구역회장, 교구경조위원, 남선교회연합회장, 여전도회연합회장, 안수집사회장, 권사회장</span></div>
+              <div class="organization-name-row"><strong>사회부</strong><span>부장 조계완 장로 / 안수집사 김경호 김승식 노성래 박성종 서정근 서춘석 이성규A 임형진 정영권 최재훈 / 권사 김성미 김선희A 박향덕 양경미 오선숙 이동순 장경숙 조국상 조현숙 채수남 최영희 / 집사 강세미 권희옥 안해란 전미라 함수정</span></div>
+            </div>
+          </details>
+        </section>
+
+        <section id="section-parishes" class="panel organization-rhythm">
+          <div class="section-head section-head-center">
+            <div>
+              <span class="eyebrow">SEC-07 교구소개</span>
+              <h2>교구소개 전체보기</h2>
+            </div>
+          </div>
+          <div class="organization-parish-list">
+            <article class="organization-parish-card">
+              <strong>1교구</strong>
+              <div>
+                <span class="organization-parish-region">교구장 김형덕 목사</span>
+                <h3>번동 · 월계 · 중계</h3>
+                <p>번동 주공 1-5단지, 현대홈타운, 금호, 솔그린, 한양, 월계초안, 월계극동, 상계주공, 중계주공, 시영, 강남, 서초, 분당, 용인</p>
+                <ul><li>번동 주공</li><li>월계</li><li>중계</li><li>분당·용인</li></ul>
+              </div>
+            </article>
+            <article class="organization-parish-card">
+              <strong>2교구</strong>
+              <div>
+                <span class="organization-parish-region">교구장 강신일 목사</span>
+                <h3>미아 · 성북 · 잠실</h3>
+                <p>진숙빌라, 요진, 미아현대, 신일고, 성신여대, 수유시장, 미아동, 송천동, 삼양동, 장위동, 잠실, 일산, 파주</p>
+                <ul><li>미아동</li><li>삼양동</li><li>성북</li><li>일산·파주</li></ul>
+              </div>
+            </article>
+            <article class="organization-parish-card">
+              <strong>3교구</strong>
+              <div>
+                <span class="organization-parish-region">교구장 김명호 목사</span>
+                <h3>우이천 · 창동 · 쌍문</h3>
+                <p>한천로, 우이천 방면, 한전병원, 금용아파트, 창동, 번동래미안, 건영, 창동주공, 인수동, 우이동, 쌍문동, 방학동, 남양주, 양주</p>
+                <ul><li>우이천</li><li>창동</li><li>쌍문·방학</li><li>남양주·양주</li></ul>
+              </div>
+            </article>
+            <article class="organization-parish-card">
+              <strong>4교구</strong>
+              <div>
+                <span class="organization-parish-region">교구장 최정철 목사</span>
+                <h3>오동공원 · 북부시장 · 하계</h3>
+                <p>교회 앞 세븐일레븐, 오동공원, 진주빌라, 한천로, 북부경찰서, 북부시장, 번동 두산위브, 번3동 기산, 하계동, 의정부</p>
+                <ul><li>오동공원</li><li>북부시장</li><li>하계</li><li>의정부</li></ul>
+              </div>
+            </article>
+            <article class="organization-parish-card">
+              <strong>젊은교구</strong>
+              <div>
+                <span class="organization-parish-region">교구장 박온유 전도사</span>
+                <h3>신혼부부와 젊은 부부</h3>
+                <p>신혼부부부터 만 40세 미만 젊은 부부가 함께하는 생애 단계 기준의 교구입니다.</p>
+                <ul><li>신혼부부</li><li>젊은 부부</li><li>만 40세 미만</li></ul>
+              </div>
+            </article>
+          </div>
+          <details class="organization-list-details">
+            <summary>인도자 중심 교구편성표 보기</summary>
+            <div class="organization-name-list">
+              <div class="organization-name-row"><strong>1교구</strong><span>1-1 조현숙 권사 / 김영순 권사, 김성림 집사 · 1-10 고형숙 권사 / 노분옥 명권 · 1-14 조문순 권사 / 최성애 집사 · 1-19 육복임 권사 / 이미현 집사 · 1-28 이효숙 권사 / 백정애 은권 · 1-35 한영자 집사 / 이영자 은권</span></div>
+              <div class="organization-name-row"><strong>2교구</strong><span>2-1 전영미 집사 / 최병숙 명권 · 2-2 조숙연 권사 / 권영자 은권 · 2-10 김성금 집사 / 신지영 집사 · 2-16 김연옥 권사 / 윤춘자 집사 · 2-25 김인숙B 집사 / 한혜림 집사 · 2-30 박미소 집사 / 주순옥 명권</span></div>
+              <div class="organization-name-row"><strong>3교구</strong><span>3-1 강세미 집사 / 최영숙 명권, 양갑순 명권 · 3-10 유호복 권사 / 박미영 권사 · 3-18 이명애 권사 / 은민아 권사, 이숙희 집사 · 3-24 이춘하 권사 / 김춘실 명권, 곽애녀 명권 · 3-30 유미화 집사 / 권기출 은권, 오금자 권사</span></div>
+              <div class="organization-name-row"><strong>4교구</strong><span>4-1 김은경B 집사 / 이정순A 명권 · 4-10 김명옥A 권사 / 이은혜 집사 · 4-19 조혜윤 집사 / 박종림 권사, 김수정 집사 · 4-28 이정자 권사 / 최영희 권사, 김덕희 권사 · 4-35 오선숙 권사 / 장윤순 명권, 김현아 집사</span></div>
+              <div class="organization-name-row"><strong>젊은교구</strong><span>1구역 김수영 집사 · 2구역 백경아 집사 · 3구역 연수림 집사</span></div>
+            </div>
+          </details>
+        </section>
+      </div>
+    </main>
+
+    <p class="draft-footer">컨펌 후 실제 `church/organization` 라우터에 적용하고 캐시 버전을 올립니다.</p>
+  </div>
+</body>
+</html>

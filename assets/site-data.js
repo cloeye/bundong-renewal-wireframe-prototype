@@ -20,7 +20,7 @@ window.BUNDONG_WIREFRAME_DATA = {
     {
       key: 'church',
       label: '번동제일교회는',
-      items: ['우리교회는', '시설안내', '교회연혁', '교구조직'],
+      items: ['우리교회는', '시설안내', '교회연혁', '교회조직'],
     },
     {
       key: 'staff',

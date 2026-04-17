@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상단 축소형 임시 시안 | 우리교회는</title>
+  <link rel="stylesheet" href="../assets/styles.css?v=20260416-9">
+  <style>
+    body {
+      margin: 0;
+      background: #ffffff;
+    }
+    .draft-site-header {
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+    .draft-site-header__inner {
+      width: min(1180px, calc(100% - 32px));
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 0 auto;
+    }
+    .draft-logo {
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+      white-space: nowrap;
+    }
+    .draft-main-nav {
+      display: flex;
+      gap: 24px;
+      color: #444444;
+      font-size: 15px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .draft-main-nav span:first-child {
+      color: #111111;
+      font-weight: 950;
+    }
+    .compact-sub-header {
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+    .compact-sub-header__inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 0;
+    }
+    .compact-sub-header__top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+    .compact-sub-header__path {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .compact-sub-header__path span:last-child {
+      color: #222222;
+    }
+    .compact-sub-header h1 {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(30px, 3.2vw, 44px);
+      line-height: 1.1;
+      letter-spacing: -0.06em;
+    }
+    .compact-sub-header__note {
+      max-width: 420px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 760;
+      line-height: 1.6;
+      text-align: right;
+    }
+    .compact-sub-tabs {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      border-top: 1px solid var(--line);
+    }
+    .compact-sub-tabs a {
+      position: relative;
+      min-height: 62px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 26px;
+      border-right: 1px solid var(--line);
+      color: #555555;
+      font-size: 16px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .compact-sub-tabs a:first-child {
+      border-left: 1px solid var(--line);
+    }
+    .compact-sub-tabs a.is-current {
+      color: #111111;
+      font-weight: 950;
+      background: #f7f7f7;
+    }
+    .compact-sub-tabs a.is-current::after {
+      content: "";
+      position: absolute;
+      right: 18px;
+      bottom: 0;
+      left: 18px;
+      height: 3px;
+      background: #333333;
+    }
+    .draft-page {
+      width: 100%;
+      margin: 0;
+    }
+    .draft-page .subpage-content {
+      width: 100%;
+    }
+    .draft-page .subpage-content > .panel {
+      padding-right: max(28px, calc((100vw - 1180px) / 2 + 28px));
+      padding-left: max(28px, calc((100vw - 1180px) / 2 + 28px));
+    }
+    .draft-page .church-landing-hero {
+      grid-template-columns: minmax(0, 1fr) minmax(380px, 0.82fr);
+      min-height: 560px;
+      align-items: center;
+    }
+    .draft-page .church-landing-hero__media {
+      min-height: 420px;
+    }
+    .draft-page .church-core-grid {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) {
+      .draft-site-header__inner,
+      .compact-sub-header__inner {
+        width: min(100% - 24px, 1180px);
+      }
+      .draft-main-nav {
+        display: none;
+      }
+      .compact-sub-header__top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .compact-sub-header__note {
+        text-align: left;
+      }
+      .draft-page .church-landing-hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .draft-page .church-landing-hero__media {
+        min-height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="draft-site-header">
+    <div class="draft-site-header__inner">
+      <div class="draft-logo">번동제일교회</div>
+      <nav class="draft-main-nav" aria-label="주요 메뉴">
+        <span>번동제일교회는</span>
+        <span>섬기는 사람들</span>
+        <span>처음오셨나요</span>
+        <span>예배안내</span>
+        <span>말씀&찬양</span>
+        <span>교회소식</span>
+      </nav>
+    </div>
+  </header>
+
+  <header class="compact-sub-header">
+    <div class="compact-sub-header__inner">
+      <div class="compact-sub-header__top">
+        <div>
+          <div class="compact-sub-header__path" aria-label="현재 위치">
+            <span>홈</span>
+            <span>&gt;</span>
+            <span>번동제일교회는</span>
+            <span>&gt;</span>
+            <span>우리교회는</span>
+          </div>
+          <h1>번동제일교회는</h1>
+        </div>
+        <p class="compact-sub-header__note">상단은 길 찾기와 하위 메뉴 역할만 남기고, 실제 첫 인상은 아래 SEC-01에서 보여줍니다.</p>
+      </div>
+      <nav class="compact-sub-tabs" aria-label="번동제일교회는 하위 메뉴">
+        <a class="is-current" href="#">우리교회는</a>
+        <a href="#">걸어온길</a>
+        <a href="#">시설안내</a>
+        <a href="#">교회조직</a>
+        <a href="#">섬기는 사람들</a>
+        <a href="#">오시는 길</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="draft-page">
+    <div class="subpage-content">
+      <section id="section-church" class="church-landing-hero panel church-about-hero">
+        <div class="church-landing-hero__media">교회 외관 또는 예배 사진 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01 우리교회 소개</span>
+          <h2>함께 행복을 만들어가는<br>번동제일교회</h2>
+          <div class="church-landing-hero__intro">
+            <p class="church-landing-hero__lead">번동제일교회는 대한예수교장로회(통합)에 속한 하나님께서 주시는 참된 복과 행복을 나누는 공동체입니다.</p>
+            <p>우리는 세상의 명예나 부요함이 아닌, 오직 하나님의 말씀을 즐거워하며 주야로 묵상하는 삶 속에서 진정한 행복을 찾습니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel church-core-section church-slogan-section">
+        <div class="section-head section-head-center">
+          <div>
+            <span class="eyebrow">SEC-02 우리교회 핵심가치</span>
+            <h2>우리교회 핵심가치</h2>
+          </div>
+        </div>
+        <div class="church-core-grid">
+          <article class="church-core-card">
+            <span>01</span>
+            <h3>말씀 중심의 공동체</h3>
+            <p>매일의 삶 속에서 하나님의 말씀을 붙들고 그 안에서 형통함을 누리는 성도들의 모임입니다.</p>
+          </article>
+          <article class="church-core-card">
+            <span>02</span>
+            <h3>시냇가에 심은 나무와 같은 공동체</h3>
+            <p>어떤 상황에서도 하나님을 의지하며, 철을 따라 열매를 맺고 이웃에게 쉼과 그늘을 제공하는 공동체를 꿈꿉니다.</p>
+          </article>
+          <article class="church-core-card">
+            <span>03</span>
+            <h3>행복의 공동체</h3>
+            <p>각자 하나님 안에 심겨진 존재로서 서로를 축복하고 섬기는 행복한 교회를 만들어갑니다.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

@@ -18,7 +18,7 @@ const SUBPAGE_META = {
   church: {
     group: '번동제일교회는',
     hero: '교회 외관 / 공동체 대표 이미지',
-    items: ['우리교회는', '걸어온길', '시설안내', '교구조직', '섬기는 사람들', '오시는 길'],
+    items: ['우리교회는', '걸어온 길', '시설안내', '교회조직', '섬기는 사람들', '오시는 길'],
   },
   newcomers: {
     group: '처음오셨나요',
@@ -68,9 +68,9 @@ const NAV_STRUCTURE = [
     label: '번동제일교회는',
     items: [
       { route: 'church', label: '우리교회는', summary: '번동제일교회의 정체성과 공동체 소개를 먼저 확인하는 화면입니다.' },
-      { route: 'church/history', label: '걸어온길', summary: '1964년 천막 예배에서 창립 60주년까지 이어진 교회의 걸음을 확인하는 화면입니다.' },
+      { route: 'church/history', label: '걸어온 길', summary: '1964년 천막 예배에서 창립 60주년까지 이어진 교회의 걸음을 확인하는 화면입니다.' },
       { route: 'church/facility', label: '시설안내', summary: '본관과 선교교육관의 주요 공간과 예배 동선을 안내하는 화면입니다.' },
-      { route: 'church/organization', label: '교구조직', summary: '교회 조직과 교구 편성, 사역 연결 구조를 안내하는 화면입니다.' },
+      { route: 'church/organization', label: '교회조직', summary: '부서소개와 교구소개를 한 화면에서 찾을 수 있도록 정리한 안내 화면입니다.' },
       { route: 'church/staff', label: '섬기는 사람들', summary: '담임목사와 교역자, 부서 담당자 정보를 표 형태로 정리한 화면입니다.' },
       { route: 'church/directions', label: '오시는 길', summary: '주소, 교통, 주차와 지도 영역을 중심으로 방문 정보를 제공하는 화면입니다.' },
     ],
@@ -79,7 +79,8 @@ const NAV_STRUCTURE = [
     key: 'newcomers',
     label: '처음오셨나요',
     items: [
-      { route: 'newcomers', label: '담임목사 인사말', summary: '처음 방문한 분들에게 교회의 분위기와 환영 메시지를 전하는 인사말 화면입니다.' },
+      { route: 'newcomers', label: '어서오세요', summary: '처음 방문한 분들을 환영하고 교회의 방향을 소개하는 첫 안내 화면입니다.' },
+      { route: 'newcomers/greeting', label: '담임목사 인사말', summary: '처음 방문한 분들에게 교회의 분위기와 환영 메시지를 전하는 인사말 화면입니다.' },
       { route: 'newcomers/registration', label: '새가족 등록안내', summary: '처음 방문부터 등록카드 작성, 안내 연결까지 한눈에 보여주는 화면입니다.' },
       { route: 'newcomers/education', label: '새가족 교육', summary: '새가족 교육 과정과 정착 흐름을 안내하는 화면입니다.' },
       { route: 'newcomers/helper', label: '새가족 섬김이', summary: '새가족을 돕는 섬김이 역할과 연결 구조를 소개하는 화면입니다.' },
@@ -124,6 +125,7 @@ const LANDING_SCROLL_TARGETS = {
     'worship/shuttle': 'section-worship-shuttle',
   },
   newcomers: {
+    'newcomers/greeting': 'section-newcomers-greeting',
     'newcomers/registration': 'section-newcomers-registration',
     'newcomers/education': 'section-newcomers-education',
     'newcomers/helper': 'section-newcomers-helper',
@@ -340,6 +342,21 @@ function sectionTitle(eyebrow, title, summary, action) {
         ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
       </div>
       ${action || ''}
+    </div>
+  `;
+}
+
+function sectionNavigator(eyebrow, items, activeTarget, route = 'church', label = '섹션 이동') {
+  return `
+    <div class="section-navigator" aria-label="${escapeHtml(label)}">
+      ${eyebrow ? `<span class="eyebrow">${escapeHtml(eyebrow)}</span>` : ''}
+      <nav>
+        ${items.map(([target, title], index) => `
+          <a class="${index === 0 ? 'is-parent ' : ''}${target === activeTarget ? 'is-current' : ''}" href="${routeHref(route)}" data-scroll-target="${escapeHtml(target)}">
+            ${escapeHtml(title)}
+          </a>
+        `).join('')}
+      </nav>
     </div>
   `;
 }
@@ -839,7 +856,7 @@ function renderChurch() {
         </div>
       </section>
       <section class="panel">
-        ${sectionTitle('Organization', '교구조직 / 부서조직')}
+        ${sectionTitle('Organization', '교회조직 / 부서조직')}
         <div class="grid grid-2">
           <article class="card">
             <h3>부서 및 기관</h3>
@@ -1525,9 +1542,10 @@ function renderSubpageScaffold(key, page, content) {
   const currentGroupLabel = navGroup ? navGroup.label : meta.group;
   const currentItemLabel = navItem ? navItem.label : pageTitle;
   const subNavItems = navGroup ? navGroup.items : [{ route: key, label: pageTitle }];
+  const compactSubHeaderClass = ['church', 'newcomers'].includes(groupKey) ? ' page-shell--flat-sub-header' : '';
 
   return `
-    <main class="inner page-shell">
+    <main class="inner page-shell${compactSubHeaderClass}">
       <section class="subpage-hero panel subpage-hero--integrated">
         <div class="subpage-hero__copy">
           <h1>${escapeHtml(currentGroupLabel)}</h1>
@@ -1608,20 +1626,25 @@ function renderChurchIdentityPage() {
     ['02', '시냇가에 심은 나무와 같은 공동체', '어떤 상황에서도 하나님을 의지하며, 철을 따라 열매를 맺고 이웃에게 쉼과 그늘을 제공하는 넉넉한 공동체를 꿈꿉니다.'],
     ['03', '행복의 공동체', '세상적인 기준으로 서로를 평가하거나 비참해지지 않고, 각자 하나님 안에 심겨진 존재로서 서로를 축복하고 섬기는 행복한 교회를 만들어갑니다.'],
   ];
+  const identityNavItems = [
+    ['section-church', '우리교회는'],
+    ['section-core', '핵심가치'],
+    ['section-greeting', '환영의 말씀'],
+    ['section-invitation', '초대합니다'],
+  ];
   const content = `
       <section id="section-church" class="church-landing-hero panel church-about-hero">
         <div class="church-landing-hero__media">교회 외관 또는 예배 사진 영역</div>
         <div class="church-landing-hero__copy">
-          <span class="eyebrow">SEC-01 우리교회 소개</span>
-          <h2>함께 행복을 만들어가는<br>번동제일교회</h2>
+          <span class="eyebrow">SEC-01</span>
+          <h2>함께 행복을 만들어가는 번동제일교회</h2>
           <div class="church-landing-hero__intro">
-            <p class="church-landing-hero__lead">번동제일교회는 대한예수교장로회(통합)에 속한 하나님께서 주시는 참된 복과 행복을 나누는 공동체입니다.</p>
-            <p>우리는 세상의 명예나 부요함이 아닌, 오직 하나님의 말씀을 즐거워하며 주야로 묵상하는 삶 속에서 진정한 행복을 찾습니다.</p>
+            <p class="church-landing-hero__lead">대한예수교장로회(통합) 소속으로, 하나님께서 주시는 참된 행복을 함께 나누는 공동체입니다.</p>
           </div>
         </div>
       </section>
-      <section class="panel church-core-section church-slogan-section">
-        ${sectionTitle('SEC-02 우리교회 핵심가치', '우리교회 핵심가치')}
+      <section id="section-core" class="panel church-core-section church-slogan-section">
+        ${sectionNavigator('SEC-02', identityNavItems, 'section-core', 'church', '우리교회는 섹션 이동')}
         <div class="church-core-slogan">
           <span class="church-identity-statement__caption">2026 번동제일교회 표어</span>
           <strong>오직 주님 안에서 행복한 교회</strong>
@@ -1645,8 +1668,8 @@ function renderChurchIdentityPage() {
           `).join('')}
         </div>
       </section>
-      <section class="panel church-pastoral-note-section">
-        ${sectionTitle('SEC-03 환영의 말씀', '환영의 말씀')}
+      <section id="section-greeting" class="panel church-pastoral-note-section">
+        ${sectionNavigator('SEC-03', identityNavItems, 'section-greeting', 'church', '우리교회는 섹션 이동')}
         <div class="church-pastoral-note">
           <div class="placeholder-box medium">담임목사 사진 영역</div>
           <blockquote>
@@ -1662,26 +1685,11 @@ function renderChurchIdentityPage() {
           </blockquote>
         </div>
       </section>
-      <section class="panel church-invitation-section">
-        ${sectionTitle('SEC-04 초대합니다', '초대합니다')}
+      <section id="section-invitation" class="panel church-invitation-section">
+        ${sectionNavigator('SEC-04', identityNavItems, 'section-invitation', 'church', '우리교회는 섹션 이동')}
         <div class="church-invitation-card">
           <h3>하나님의 자녀로 살아가는 기쁨을 누리고 싶으신 모든 분들을 번동제일교회로 초대합니다.</h3>
           <p>우리 함께 지금보다 더 행복한 신앙 생활을 시작해 봅시다!</p>
-        </div>
-      </section>
-      <section class="panel church-logo-section">
-        ${sectionTitle('SEC-05 번동제일교회 로고', '번동제일교회 로고')}
-        <div class="church-logo-grid">
-          <article class="church-logo-card">
-            <div class="placeholder-box medium">심벌 / 로고 이미지 영역</div>
-            <h3>심벌 의미</h3>
-            <p>추후 확정될 심벌 설명 문구가 들어가는 blank 영역입니다.</p>
-          </article>
-          <article class="church-logo-card">
-            <div class="placeholder-box medium">시그니처 / 조합형 영역</div>
-            <h3>로고 사용 안내</h3>
-            <p>국문, 영문, 약식 로고와 사용 규칙을 정리하는 blank 영역입니다.</p>
-          </article>
         </div>
       </section>
   `;
@@ -1721,6 +1729,13 @@ function renderChurchStaffPage() {
     { name: '최봉금', role: '조리', detail: '연락처 별도 안내' },
     { name: '김기현', role: '비품 영상 관리자', detail: '070-4267-7439' },
   ];
+  const staffNavItems = [
+    ['staff-section-intro', '섬기는 사람들'],
+    ['staff-section-pastors', '교역자'],
+    ['staff-section-elders', '원로, 은퇴장로'],
+    ['staff-section-serving-elders', '시무장로'],
+    ['staff-section-office', '교회직원'],
+  ];
   const person = (item) => `
     <article class="staff-clean-card">
       <div class="staff-clean-card__photo">사진</div>
@@ -1740,18 +1755,28 @@ function renderChurchStaffPage() {
       </div>
     </div>
   `;
+  const staffSectionNavigator = (label, activeTarget) => `
+    <div class="staff-section-navigator" aria-label="섬기는 사람들 섹션 이동">
+      <span class="eyebrow">${escapeHtml(label)}</span>
+      <nav>
+        ${staffNavItems.map(([target, title], index) => `
+          <a class="${index === 0 ? 'is-parent ' : ''}${target === activeTarget ? 'is-current' : ''}" href="#/church/staff" data-scroll-target="${escapeHtml(target)}">
+            ${escapeHtml(title)}
+          </a>
+        `).join('')}
+      </nav>
+    </div>
+  `;
   const content = `
-      <section class="panel staff-clean-hero">
-        ${sectionTitle('Leadership', '섬기는 사람들', '번동제일교회를 섬기는 교역자, 장로, 직원의 위계를 한눈에 확인할 수 있도록 정리했습니다.')}
-        <nav class="staff-clean-tabs" aria-label="섬기는 사람들 섹션 이동">
-          <a href="#/church/staff" data-scroll-target="staff-section-pastors">교역자</a>
-          <a href="#/church/staff" data-scroll-target="staff-section-elders">원로, 은퇴장로</a>
-          <a href="#/church/staff" data-scroll-target="staff-section-serving-elders">시무장로</a>
-          <a href="#/church/staff" data-scroll-target="staff-section-office">교회직원</a>
-        </nav>
+      <section id="staff-section-intro" class="panel staff-clean-hero staff-clean-hero--photo">
+        <div class="staff-clean-hero__overlay">
+          <span class="eyebrow">SEC-01</span>
+          <h2>함께 교회를 섬기는 사람들입니다</h2>
+          <p>담임목사님을 비롯해 번동제일교회를 함께 섬기는 교역자와 직분자를 소개합니다.</p>
+        </div>
       </section>
       <section id="staff-section-pastors" class="panel staff-clean-section">
-        ${sectionTitle('Pastors', '교역자')}
+        ${staffSectionNavigator('SEC-02', 'staff-section-pastors')}
         <div class="staff-clean-leaders">
           ${roleBlock('원로목사', groups.emeritusPastor, 'is-leader')}
           ${roleBlock('담임목사', groups.seniorPastor, 'is-leader')}
@@ -1769,7 +1794,7 @@ function renderChurchStaffPage() {
         </div>
       </section>
       <section id="staff-section-elders" class="panel staff-clean-section">
-        ${sectionTitle('Elders', '원로, 은퇴장로')}
+        ${staffSectionNavigator('SEC-03', 'staff-section-elders')}
         <div class="staff-clean-role-stack">
           ${elderGroups.map((group) => `
             <div class="staff-clean-role">
@@ -1782,13 +1807,13 @@ function renderChurchStaffPage() {
         </div>
       </section>
       <section id="staff-section-serving-elders" class="panel staff-clean-section">
-        ${sectionTitle('Serving Elders', '시무장로')}
+        ${staffSectionNavigator('SEC-04', 'staff-section-serving-elders')}
         <div class="staff-clean-grid is-many">
           ${activeElders.map((name) => personFromName(name, '시무장로')).join('')}
         </div>
       </section>
       <section id="staff-section-office" class="panel staff-clean-section">
-        ${sectionTitle('Office', '교회직원')}
+        ${staffSectionNavigator('SEC-05', 'staff-section-office')}
         <div class="staff-clean-grid is-office">
           ${officeStaff.map((item) => person(item)).join('')}
         </div>
@@ -1800,24 +1825,25 @@ function renderChurchStaffPage() {
 function renderChurchFacilityPage() {
   const source = data.pages.church;
   const page = getNavItem('church/facility');
+  const facilityNavItems = [
+    ['facility-section-intro', '시설안내'],
+    ['facility-section-spaces', '공간 안내'],
+    ['facility-section-cafe', '카페헤븐'],
+    ['facility-section-visit', '방문 동선'],
+  ];
   const content = `
-      <section class="church-landing-hero panel facility-intro-panel">
+      <section id="facility-section-intro" class="church-landing-hero panel facility-intro-panel">
         <div class="church-landing-hero__media">본관 또는 교회 전경 사진 영역</div>
         <div class="church-landing-hero__copy">
-          <span class="eyebrow">SEC-01 시설 안내</span>
-          <h2>우리교회 공간을 소개합니다</h2>
+          <span class="eyebrow">SEC-01</span>
+          <h2>예배와 모임이 이루어지는 공간입니다</h2>
           <div class="church-landing-hero__intro">
             <p>예배와 모임이 이루어지는 주요 공간은 본관과 (선교)교육관으로 나누어져 있습니다.</p>
           </div>
         </div>
       </section>
-      <section class="panel facility-space-panel">
-        <div class="section-head section-head-center">
-          <div>
-            <span class="eyebrow">SEC-02 공간별 안내</span>
-            <h2>예배와 모임의 공간</h2>
-          </div>
-        </div>
+      <section id="facility-section-spaces" class="panel facility-space-panel">
+        ${sectionNavigator('SEC-02', facilityNavItems, 'facility-section-spaces', 'church/facility', '시설안내 섹션 이동')}
         <div class="facility-stack">
           ${source.facilities.map((item, index) => `
             <article class="facility-overview">
@@ -1844,13 +1870,8 @@ function renderChurchFacilityPage() {
           `).join('')}
         </div>
       </section>
-      <section class="panel facility-cafe-panel">
-        <div class="section-head section-head-center">
-          <div>
-            <span class="eyebrow">SEC-03 카페헤븐</span>
-            <h2>함께 머무는 교제의 공간</h2>
-          </div>
-        </div>
+      <section id="facility-section-cafe" class="panel facility-cafe-panel">
+        ${sectionNavigator('SEC-03', facilityNavItems, 'facility-section-cafe', 'church/facility', '시설안내 섹션 이동')}
         <div class="facility-cafe-grid">
           <div class="facility-cafe-photo">카페헤븐 사진 영역</div>
           <div class="facility-cafe-copy">
@@ -1868,13 +1889,8 @@ function renderChurchFacilityPage() {
           </div>
         </div>
       </section>
-      <section class="panel facility-visit-panel">
-        <div class="section-head section-head-center">
-          <div>
-            <span class="eyebrow">SEC-04 방문 동선</span>
-            <h2>처음 오시는 분을 위해</h2>
-          </div>
-        </div>
+      <section id="facility-section-visit" class="panel facility-visit-panel">
+        ${sectionNavigator('SEC-04', facilityNavItems, 'facility-section-visit', 'church/facility', '시설안내 섹션 이동')}
         <div class="facility-visit-grid">
           <article class="facility-visit-card">
             <div class="facility-visit-icon">01</div>
@@ -1952,24 +1968,25 @@ function renderChurchHistoryPage() {
       ],
     },
   ];
+  const historyNavItems = [
+    ['history-section-intro', '걸어온 길'],
+    ['history-section-story', '걸어온 시간'],
+    ['history-section-anniversary', '60주년의 감사'],
+    ['history-section-archive', '기억의 자리'],
+  ];
   const content = `
-      <section class="church-landing-hero panel history-hero-panel">
+      <section id="history-section-intro" class="church-landing-hero panel history-hero-panel">
         <div class="church-landing-hero__media">역사 대표 사진 영역</div>
         <div class="church-landing-hero__copy">
-          <span class="eyebrow">SEC-01 60년의 걸음</span>
+          <span class="eyebrow">SEC-01</span>
           <h2>한 천막에서 시작된 예배가 오늘의 교회가 되기까지</h2>
           <div class="church-landing-hero__intro">
             <p>1964년부터 오늘까지, 번동제일교회가 같은 자리에서 걸어온 믿음의 시간입니다.</p>
           </div>
         </div>
       </section>
-      <section class="panel history-story-panel">
-        <div class="section-head section-head-center">
-          <div>
-            <span class="eyebrow">SEC-02 걸어온 시간</span>
-            <h2>하나님이 이끄신 시간</h2>
-          </div>
-        </div>
+      <section id="history-section-story" class="panel history-story-panel">
+        ${sectionNavigator('SEC-02', historyNavItems, 'history-section-story', 'church/history', '걸어온 길 섹션 이동')}
         <div class="history-era-list">
           ${historyGroups.map((group) => `
             <article class="history-era-card">
@@ -1990,13 +2007,8 @@ function renderChurchHistoryPage() {
           `).join('')}
         </div>
       </section>
-      <section class="panel church-vision-section history-vision-section">
-        <div class="section-head section-head-center">
-          <div>
-            <span class="eyebrow">SEC-03 60주년의 감사</span>
-            <h2>60주년의 감사</h2>
-          </div>
-        </div>
+      <section id="history-section-anniversary" class="panel church-vision-section history-vision-section">
+        ${sectionNavigator('SEC-03', historyNavItems, 'history-section-anniversary', 'church/history', '걸어온 길 섹션 이동')}
         <div class="church-vision-section__inner">
           <div class="church-vision-section__copy">
             <h2>60주년의 감사가<br>100주년의 감사로 이어지도록</h2>
@@ -2012,13 +2024,8 @@ function renderChurchHistoryPage() {
           </div>
         </div>
       </section>
-      <section class="panel history-archive-panel">
-        <div class="section-head section-head-center">
-          <div>
-            <span class="eyebrow">SEC-04 기억의 자리</span>
-            <h2>기억의 자리</h2>
-          </div>
-        </div>
+      <section id="history-section-archive" class="panel history-archive-panel">
+        ${sectionNavigator('SEC-04', historyNavItems, 'history-section-archive', 'church/history', '걸어온 길 섹션 이동')}
         <div class="grid grid-2">
           <a class="church-organization-banner" href="${routeHref('anniversary')}">
             <h3>창립 60주년</h3>
@@ -2035,47 +2042,228 @@ function renderChurchHistoryPage() {
 }
 
 function renderChurchOrganizationPage() {
-  const source = data.pages.church;
   const page = getNavItem('church/organization');
+  const units = [
+    ['예배부', '예배와 성례, 안내', '부장 이현우 장로', true],
+    ['찬양부', '찬양대와 찬양 사역', '부장 이현우 장로', true],
+    ['서무부', '교직원, 문서, 기록', '부장 홍도희 장로'],
+    ['총무부', '행사와 운영 지원', '부장 홍도희 장로'],
+    ['재정부', '수입, 지출, 예결산', '부장 이호철 장로'],
+    ['관리부', '시설, 비품, 안전', '부장 김희진 장로'],
+    ['봉사부', '급식, 행사, 환경', '부장 이호철 장로'],
+    ['미화부', '청소와 환경관리', '부장 최병욱 장로'],
+    ['감사부', '재정과 운영 감사', '부장 서현철 장로'],
+    ['새가족부', '등록과 정착 안내', '부장 조계완 장로', true],
+    ['교육부', '교회학교와 양육', '부장 안동찬 장로', true],
+    ['전도부', '전도와 교구 협력', '부장 이선규A 장로'],
+    ['세계선교부', '국내외 선교 지원', '부장 홍도희 장로'],
+    ['체육부', '체육과 친교 활동', '부장 최상균 장로'],
+    ['차량부', '차량 운행과 주차', '부장 김희진 장로'],
+    ['홍보영상부', '영상, 사진, 기록', '부장 이선규A 장로'],
+    ['문화선교부', '카페, 문화, 지역', '부장 최상균 장로'],
+    ['경조부', '장례와 경조 지원', '부장 이선규A 장로'],
+    ['사회부', '구제와 지역 섬김', '부장 조계완 장로'],
+  ];
+  const departmentNames = [
+    ['예배부', '부장 이현우 장로 / 안수집사 구형모 류희석 송기춘 이재호 최강산 / 권사 강효순 유호복 황혜선'],
+    ['찬양부', '부장 이현우 장로 / 안수집사 노승구(시온) 강환범(호산나) / 권사 김길례(브니엘) 조문순(아가페)'],
+    ['서무부', '부장 홍도희 장로 / 안수집사 김정훈 서진모 정영권 / 권사 김영의 김은경C 유은주 윤미자 이정열 최정례'],
+    ['총무부', '부장 홍도희 장로 / 안수집사 김승식 서정수 서춘석 우일균 최재훈 / 권사 김미경 김선희A 김정이 유효순 육복임 이성희 장은영 조국상'],
+    ['재정부', '부장 이호철 장로 / 안수집사 김용현 안태석 정윤화 / 권사 민성순 고은경 박옥순 이혜영 최영복B'],
+    ['관리부', '부장 김희진 장로 / 안수집사 강정학 김원석 서진모 안태석 윤승호 이효민 최재훈 / 권사 김영이 김해욱 박연숙 오금자 옥동녀 이혜영 장귀애 차태숙 최윤숙 황정희 한희'],
+    ['봉사부', '부장 이호철 장로 / 안수집사 김승식 박성종 서정근 이성규A 이시형 임형진 / 권사 김정옥B 김해욱 박미영 양경미 옥형미'],
+    ['미화부', '부장 최병욱 장로 / 권사 민혜경 박종림 한희 / 협권 류명곤 / 집사 김성금 이순오 함수정 최윤영 최은하 황윤영'],
+    ['감사부', '부장 서현철 장로 / 안수집사 강정학 노승구 지승근 주정식 / 권사 양경숙 오미숙 / 집사 김기은 김현정 안해란'],
+    ['새가족부', '부장 조계완 장로 / 안수집사 김경호 김영석 노성래 윤승호 임형진 / 권사 강효순 김명숙C 김정섭 김태경 박금희 조숙연 최영희 황정희 / 집사 전미라'],
+    ['교육부', '부장 안동찬 장로 / 안수집사 김대일 김영태 윤승호 최강산 최대성 / 권사 김명숙C 김명옥 김정섭 정수현 조숙연'],
+    ['전도부', '부장 이선규A 장로 / 안수집사 김양호 박성종 서정근 윤승호 임동섭 임형진 / 권사 김길례 나승초 박갑순 박경화 양경미 이명애 이정열 정수현 조국상 최윤숙 최태정 허해경 / 교구·구역회장'],
+    ['세계선교부', '부장 홍도희 장로 / 안수집사 강환범 서진모 윤승호 주정식 / 권사 김순례 남주애 박종림 박향덕 유정순 이미정 이옥란 조숙연 허해경'],
+    ['체육부', '부장 최상균 장로 / 안수집사 김영찬 김용현 김원석 박성종 송기춘 유동훈 유효경 이효민 정영권 정윤화 최대성 최순신 / 집사 김원민 김재엽 박용욱 손보명 김인숙D 임미경 안해란 진소희 / 권사 김경희 박향덕 양경숙 오선숙 노흥미 채수남 / 교구·구역회장'],
+    ['차량부', '부장 김희진 장로 / 안수집사 서춘석 이성규A 박성종'],
+    ['홍보영상부', '부장 이선규A 장로 / 안수집사 서진모 이효민 임형진 정윤화 / 권사 나승초 박영애 오미숙 함광숙'],
+    ['문화선교부', '부장 최상균 장로 / 안수집사 유효경 김원석 유동훈 / 권사 김정이 양경미 양경숙 조문순 / 집사 김인숙D 손보명'],
+    ['경조부', '부장 이선규A 장로 / 안수집사 김석은 김양호 노승구 이성규A 이효민 임동섭 / 권사 김명희 김성미 김순례 박미영 / 각 교구 구역회장, 교구경조위원, 남선교회연합회장, 여전도회연합회장, 안수집사회장, 권사회장'],
+    ['사회부', '부장 조계완 장로 / 안수집사 김경호 김승식 노성래 박성종 서정근 서춘석 이성규A 임형진 정영권 최재훈 / 권사 김성미 김선희A 박향덕 양경미 오선숙 이동순 장경숙 조국상 조현숙 채수남 최영희 / 집사 강세미 권희옥 안해란 전미라 함수정'],
+  ];
+  const education = [
+    ['영아부', '0세-3세 / 주일 09:30 / 본관 영아부실', 'https://cafe.naver.com/bundonginfant'],
+    ['유아부', '4세-5세 / 주일 09:30 / 교육관 유아부실', 'https://cafe.daum.net/bundongbaby'],
+    ['유치부', '6세-7세 / 주일 09:30 / 교육관 유치부실'],
+    ['유년부', '초등 1-3학년 / 주일 09:30 / 유년부실'],
+    ['초등부', '초등 4-6학년 / 주일 09:30 / 초등부실'],
+    ['청소년부', '중학생-고등학생 / 주일 09:30 / 본관 중예배실'],
+  ];
+  const choirs = [
+    ['시온 찬양대', '대장 노승구 안수집사 / 지휘 김안국 안수집사'],
+    ['호산나 찬양대', '대장 강환범 안수집사 / 지휘 조미라 선생'],
+    ['브니엘 찬양대', '대장 김길례 권사 / 지휘 오정근 선생'],
+    ['아가페 찬양대', '대장 조문순 권사 / 지휘 이광옥 권사'],
+  ];
+  const choirNames = [
+    ['시온 찬양대', '대장 노승구 안수집사 / 부대장 홍태봉 권사, 박용욱 집사 / 지휘 김안국 안수집사 / 반주 변시온 권사, 신예은 선생'],
+    ['호산나 찬양대', '대장 강환범 안수집사 / 부대장 최재훈 안수집사, 소완식 권사 / 지휘 조미라 선생 / 반주 이준연 선생, 안희정 선생'],
+    ['브니엘 찬양대', '대장 김길례 권사 / 부대장 김영찬 안수집사, 김수현 집사 / 지휘 오정근 선생 / 반주 전익덕 집사, 심지현 선생'],
+    ['아가페 찬양대', '대장 조문순 권사 / 부대장 류명곤 협권, 차태숙 권사 / 지휘 이광옥 권사 / 반주 이은진 선생, 이성진 선생'],
+    ['삼마 중창단', '단장 김양호 안수집사 / 지도 김안국 안수집사 / 리더 서현철 장로 / 반장 신예은 선생'],
+    ['임마누엘 중창단', '단장 마경선 권사 / 지도·반주 오지현 집사'],
+    ['미리암찬양단', '단장 김영의 권사 / 지도 김성미 권사 / 반주 민혜경 권사'],
+    ['프레이즈 찬양단', '단장 노소은 권사 / 부단장 옥동녀 권사 / 지도 남주애 권사'],
+    ['쉐마찬양단', '단장 김성미 권사 / 부단장 박갑순 권사'],
+    ['쉐카이나찬양단', '단장 최강산 안수집사 / 리더 김성림 전도사'],
+    ['프레이즈 앙상블', '단장 김대일 안수집사 / 부단장 한희 권사, 이건희 집사 / 지도 김안국 안수집사 / 악장 심예슬 선생'],
+    ['프레이즈 율동단', '단장·지도 강순옥 은퇴장로'],
+    ['두나미스찬양단', '단장 강신일 목사'],
+  ];
+  const parishes = [
+    ['1교구', '교구장 김형덕 목사', '번동 · 월계 · 중계', '번동 주공 1-5단지, 현대홈타운, 금호, 솔그린, 한양, 월계초안, 월계극동, 상계주공, 중계주공, 시영, 강남, 서초, 분당, 용인', ['번동 주공', '월계', '중계', '분당·용인']],
+    ['2교구', '교구장 강신일 목사', '미아 · 성북 · 잠실', '진숙빌라, 요진, 미아현대, 신일고, 성신여대, 수유시장, 미아동, 송천동, 삼양동, 장위동, 잠실, 일산, 파주', ['미아동', '삼양동', '성북', '일산·파주']],
+    ['3교구', '교구장 김명호 목사', '우이천 · 창동 · 쌍문', '한천로, 우이천 방면, 한전병원, 금용아파트, 창동, 번동래미안, 건영, 창동주공, 인수동, 우이동, 쌍문동, 방학동, 남양주, 양주', ['우이천', '창동', '쌍문·방학', '남양주·양주']],
+    ['4교구', '교구장 최정철 목사', '오동공원 · 북부시장 · 하계', '교회 앞 세븐일레븐, 오동공원, 진주빌라, 한천로, 북부경찰서, 북부시장, 번동 두산위브, 번3동 기산, 하계동, 의정부', ['오동공원', '북부시장', '하계', '의정부']],
+    ['젊은교구', '교구장 박온유 전도사', '신혼부부와 젊은 부부', '신혼부부부터 만 40세 미만 젊은 부부가 함께하는 생애 단계 기준의 교구입니다.', ['신혼부부', '젊은 부부', '만 40세 미만']],
+  ];
+  const parishLeaders = [
+    ['1교구', '1-1 조현숙 권사 / 김영순 권사, 김성림 집사 · 1-10 고형숙 권사 / 노분옥 명권 · 1-14 조문순 권사 / 최성애 집사 · 1-19 육복임 권사 / 이미현 집사 · 1-28 이효숙 권사 / 백정애 은권 · 1-35 한영자 집사 / 이영자 은권'],
+    ['2교구', '2-1 전영미 집사 / 최병숙 명권 · 2-2 조숙연 권사 / 권영자 은권 · 2-10 김성금 집사 / 신지영 집사 · 2-16 김연옥 권사 / 윤춘자 집사 · 2-25 김인숙B 집사 / 한혜림 집사 · 2-30 박미소 집사 / 주순옥 명권'],
+    ['3교구', '3-1 강세미 집사 / 최영숙 명권, 양갑순 명권 · 3-10 유호복 권사 / 박미영 권사 · 3-18 이명애 권사 / 은민아 권사, 이숙희 집사 · 3-24 이춘하 권사 / 김춘실 명권, 곽애녀 명권 · 3-30 유미화 집사 / 권기출 은권, 오금자 권사'],
+    ['4교구', '4-1 김은경B 집사 / 이정순A 명권 · 4-10 김명옥A 권사 / 이은혜 집사 · 4-19 조혜윤 집사 / 박종림 권사, 김수정 집사 · 4-28 이정자 권사 / 최영희 권사, 김덕희 권사 · 4-35 오선숙 권사 / 장윤순 명권, 김현아 집사'],
+    ['젊은교구', '1구역 김수영 집사 · 2구역 백경아 집사 · 3구역 연수림 집사'],
+  ];
+  const organizationNavItems = [
+    ['organization-section-intro', '교회조직'],
+    ['organization-section-governance', '상위 조직'],
+    ['organization-section-education', '교육부'],
+    ['organization-section-youth', '청년부'],
+    ['organization-section-choir', '찬양대'],
+    ['section-departments', '부서소개'],
+    ['section-parishes', '교구소개'],
+  ];
   const content = `
-      <section class="panel organization-intro-panel">
-        ${sectionTitle('Organization', '교구조직', '성도들이 예배와 사역, 돌봄 안에서 자연스럽게 연결되도록 조직과 교구 구조를 안내합니다.')}
-        <div class="organization-summary-grid">
-          <article class="card organization-summary-card">
-            <span class="eyebrow">Ministry</span>
-            <h3>교회조직안내</h3>
-            <p>예배, 교육, 찬양, 봉사, 선교 등 교회 사역의 주요 조직을 한눈에 정리합니다.</p>
+      <section id="organization-section-intro" class="church-landing-hero panel organization-hero-panel">
+        <div class="church-landing-hero__media">조직 흐름 요약 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <h2>교회의 구조와 공동체를 한눈에</h2>
+          <div class="church-landing-hero__intro">
+            <p>예배, 교육, 찬양, 교구까지 번동제일교회를 이루는 공동체를 소개합니다.</p>
+          </div>
+        </div>
+      </section>
+      <section id="organization-section-governance" class="panel organization-rhythm">
+        ${sectionNavigator('SEC-02', organizationNavItems, 'organization-section-governance', 'church/organization', '교회조직 섹션 이동')}
+        <div class="organization-governance-grid">
+          <article class="organization-card">
+            <small>01</small>
+            <h3>공동의회</h3>
+            <p>교회의 중요한 의사를 함께 확인하고 결정하는 회의입니다.</p>
+            <div class="organization-governance-list">
+              <div><strong>의장</strong><span>황대석 목사</span></div>
+              <div><strong>서기</strong><span>최병욱 장로</span></div>
+              <div><strong>회원</strong><span>무흠 입교인</span></div>
+            </div>
+            <p class="organization-definition">무흠 입교인은 교회 공동체 안에서 책벌 중이 아니며 공동의회 회원 자격을 가진 입교인을 뜻합니다.</p>
           </article>
-          <article class="card organization-summary-card">
-            <span class="eyebrow">Parish</span>
-            <h3>교구편성안내</h3>
-            <p>성도 돌봄과 공동체 연결을 위한 교구 편성 구조를 안내합니다.</p>
+          <article class="organization-card">
+            <small>02</small>
+            <h3>당회</h3>
+            <p>목회와 행정의 주요 방향을 살피고 교회의 질서를 세웁니다.</p>
+            <div class="organization-governance-list">
+              <div><strong>담임</strong><span>황대석 목사</span></div>
+              <div><strong>시무</strong><span>이선규A, 이선규B, 최병욱, 이현우, 안동찬, 홍도희, 이호철, 조계완, 서현철, 김희진, 최상균 장로</span></div>
+            </div>
+          </article>
+          <article class="organization-card">
+            <small>03</small>
+            <h3>제직회</h3>
+            <p>각 부서와 사역이 실제로 움직이도록 실행과 운영을 맡습니다.</p>
+            <div class="organization-governance-list">
+              <div><strong>구성</strong><span>목사, 장로, 안수집사, 권사, 집사 등 제직</span></div>
+              <div><strong>실행</strong><span>예배부, 찬양부, 서무부, 총무부, 재정부, 관리부, 봉사부, 교육부, 전도부 등</span></div>
+            </div>
           </article>
         </div>
       </section>
-      <section class="panel">
-        ${sectionTitle('Departments', '부서 및 기관')}
-        <div class="organization-card-grid">
-          ${source.departments.map((item) => `
-            <article class="card organization-detail-card">
-              <div class="placeholder-box small">${escapeHtml(item.title)} 사역 이미지</div>
-              <h3>${escapeHtml(item.title)}</h3>
-              <p>${escapeHtml(item.detail)}</p>
+      <section id="organization-section-education" class="panel organization-rhythm">
+        ${sectionNavigator('SEC-03', organizationNavItems, 'organization-section-education', 'church/organization', '교회조직 섹션 이동')}
+        <div class="organization-age-grid">
+          ${education.map(([title, detail, href]) => `
+            <article class="organization-age-card">
+              <div class="organization-photo is-small">${escapeHtml(title)} 사진 영역</div>
+              <strong>${escapeHtml(title)}</strong>
+              <span>${escapeHtml(detail)}</span>
+              ${href ? `<a class="organization-cafe-link" href="${escapeHtml(href)}" target="_blank" rel="noopener">카페 바로가기</a>` : ''}
             </article>
           `).join('')}
         </div>
       </section>
-      <section class="panel">
-        ${sectionTitle('Parish', '교구 편성')}
-        <div class="grid grid-2">
-          ${source.parishes.map((item) => `
-            <article class="card parish-card">
-              <span class="eyebrow">Care Group</span>
-              <h3>${escapeHtml(item.title)}</h3>
-              <p>${escapeHtml(item.detail)}</p>
+      <section id="organization-section-youth" class="panel organization-rhythm">
+        ${sectionNavigator('SEC-04', organizationNavItems, 'organization-section-youth', 'church/organization', '교회조직 섹션 이동')}
+        <div class="organization-youth-feature">
+          <div class="organization-photo is-wide">청년부 예배 사진 영역</div>
+          <div class="organization-youth-grid">
+            <article class="organization-name-panel"><small>예배</small><h3>주일4부 청년예배</h3><p>예배와 삶의 온전함이 회복되는 공동체를 지향합니다.</p></article>
+            <article class="organization-name-panel"><small>말씀</small><h3>로마서 12:1-2</h3><p>기존 청년부 소개의 핵심 말씀을 별도 섹션으로 살립니다.</p></article>
+            <article class="organization-name-panel"><small>안내</small><h3>예배시간과 장소</h3><p>주일 오후 1:30, 본관 중예배실에서 청년예배로 모입니다.</p></article>
+          </div>
+        </div>
+      </section>
+      <section id="organization-section-choir" class="panel organization-rhythm">
+        ${sectionNavigator('SEC-05', organizationNavItems, 'organization-section-choir', 'church/organization', '교회조직 섹션 이동')}
+        <div class="organization-choir-grid">
+          ${choirs.map(([title, detail]) => `
+            <article class="organization-name-panel">
+              <div class="organization-photo is-small">${escapeHtml(title)} 사진 영역</div>
+              <small>찬양대</small>
+              <h3>${escapeHtml(title)}</h3>
+              <p>${escapeHtml(detail)}</p>
             </article>
           `).join('')}
         </div>
+        <details class="organization-list-details">
+          <summary>찬양대와 찬양단 명단 확인</summary>
+          <div class="organization-name-list">
+            ${choirNames.map(([title, body]) => `<div class="organization-name-row"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span></div>`).join('')}
+          </div>
+        </details>
+      </section>
+      <section id="section-departments" class="panel organization-rhythm">
+        ${sectionNavigator('SEC-06', organizationNavItems, 'section-departments', 'church/organization', '교회조직 섹션 이동')}
+        <div class="organization-unit-grid">
+          ${units.map(([title, body, leader, featured]) => `
+            <article class="organization-unit-card ${featured ? 'is-featured' : ''}">
+              <strong>${escapeHtml(title)}</strong>
+              <small>${escapeHtml(body)}</small>
+              <em>${escapeHtml(leader)}</em>
+            </article>
+          `).join('')}
+        </div>
+        <details class="organization-list-details">
+          <summary>부서별 명단 확인</summary>
+          <div class="organization-name-list">
+            ${departmentNames.map(([title, body]) => `<div class="organization-name-row"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span></div>`).join('')}
+          </div>
+        </details>
+      </section>
+      <section id="section-parishes" class="panel organization-rhythm">
+        ${sectionNavigator('SEC-07', organizationNavItems, 'section-parishes', 'church/organization', '교회조직 섹션 이동')}
+        <div class="organization-parish-list">
+          ${parishes.map(([title, leader, area, body, tags]) => `
+            <article class="organization-parish-card">
+              <strong>${escapeHtml(title)}</strong>
+              <div>
+                <span class="organization-parish-region">${escapeHtml(leader)}</span>
+                <h3>${escapeHtml(area)}</h3>
+                <p>${escapeHtml(body)}</p>
+                <ul>${tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>
+              </div>
+            </article>
+          `).join('')}
+        </div>
+        <details class="organization-list-details">
+          <summary>인도자 중심 교구편성표 보기</summary>
+          <div class="organization-name-list">
+            ${parishLeaders.map(([title, body]) => `<div class="organization-name-row"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span></div>`).join('')}
+          </div>
+        </details>
       </section>
   `;
   return renderSubpageScaffold('church/organization', page, content);
@@ -2099,21 +2287,49 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
     ['이진희 성도', '#소망교구 #첫방문'],
     ['이상훈 성도', '#청년부 #새가족'],
   ];
+  const newcomerNavItems = [
+    ['section-newcomers-welcome', '어서오세요'],
+    ['section-newcomers-greeting', '담임목사 인사말'],
+    ['section-newcomers-registration', '새가족 등록안내'],
+    ['section-newcomers-education', '새가족 교육'],
+    ['section-newcomers-helper', '새가족 섬김이'],
+    ['section-newcomers-welcome-party', '새가족환영회'],
+    ['section-newcomers-weekly-family', '금주의 새가족'],
+  ];
+  const newcomerSectionHead = (eyebrow, title, summary) => `
+    <div class="newcomer-section-head">
+      <span class="eyebrow">${escapeHtml(eyebrow)}</span>
+      <h2>${escapeHtml(title)}</h2>
+      <p>${escapeHtml(summary)}</p>
+    </div>
+  `;
   const content = `
-      <section id="section-newcomers" class="panel newcomers-greeting-panel">
-        ${sectionTitle('Greeting', '담임목사 인사말', '처음 방문한 분들이 교회의 환영과 방향을 먼저 느낄 수 있도록 구성합니다.')}
+      <section id="section-newcomers-welcome" class="church-landing-hero panel newcomers-welcome-hero">
+        <div class="church-landing-hero__media">새가족 환영 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <h2>어서오세요<br>환영하고 축복합니다</h2>
+          <div class="church-landing-hero__intro">
+            <p>번동제일교회는 오직 주님 안에 거하며, 함께 행복한 교회를 만들어 나가는 공동체입니다.</p>
+          </div>
+        </div>
+      </section>
+      <section id="section-newcomers-greeting" class="panel newcomers-greeting-panel">
+        ${newcomerSectionHead('SEC-02', '담임목사 인사말', '먼저 인사드립니다')}
+        ${sectionNavigator('', newcomerNavItems, 'section-newcomers-greeting', 'newcomers', '처음오셨나요 섹션 이동')}
         <div class="newcomer-visual-copy">
           <div class="placeholder-box tall">담임목사 인사말 이미지 영역<br>aboutA_01_2026 참고</div>
           <article class="card">
-            <span class="eyebrow">Welcome</span>
-            <h3>샬롬! 함께 행복을 만들어가는 번동제일교회에 오신것을 환영하고 축복합니다.</h3>
+            <span class="eyebrow">담임목사 인사말</span>
+            <h3>샬롬! 함께 행복을 만들어가는 번동제일교회에 오신 것을 환영하고 축복합니다.</h3>
             <p>여러분들이 언제든 찾아와 기댈 수 있는 시냇가 나무와 같은 교회 되기를 소망합니다. 성도님들의 삶의 고민을 함께 나누고, 말씀으로 위로하며, 매주 선포되는 설교를 통해 참된 행복을 발견하는 행복한 교회의 여정에 사랑하는 당신을 초청합니다.</p>
             <p class="meta">황대석 담임목사</p>
           </article>
         </div>
       </section>
       <section id="section-newcomers-registration" class="panel newcomers-registration-panel">
-        ${sectionTitle('Registration', '새가족 등록안내', '새가족 등록부터 환영회까지의 흐름을 단계별로 안내합니다.')}
+        ${newcomerSectionHead('SEC-03', '새가족 등록안내', '등록부터 환영회까지, 한 단계씩 함께합니다')}
+        ${sectionNavigator('', newcomerNavItems, 'section-newcomers-registration', 'newcomers', '처음오셨나요 섹션 이동')}
         <div class="newcomer-flow-line">
           ${['새가족등록', '예배시간중 환영인사', '사진촬영', '면담 및 기도', '새가족환영회'].map((item, index) => `
             <article class="newcomer-flow-step">
@@ -2124,12 +2340,8 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
         </div>
       </section>
       <section id="section-newcomers-education" class="panel newcomers-education-panel">
-        ${sectionTitle('Education', '새가족 교육', '4주 양육과정을 통해 신앙의 기본과 교회 공동체를 알아갑니다.')}
-        <div class="newcomer-education-meta">
-          <span>4주 양육과정</span>
-          <span>매주 주일</span>
-          <span>교회 2층 카페헤슨 큰 모듬방</span>
-        </div>
+        ${newcomerSectionHead('SEC-04', '새가족 교육', '4주간 신앙의 기초와 교회 공동체를 함께 배워갑니다')}
+        ${sectionNavigator('', newcomerNavItems, 'section-newcomers-education', 'newcomers', '처음오셨나요 섹션 이동')}
         <div class="newcomer-week-grid">
           ${['1주 성경은 무엇인가?', '2주 구원이란 무엇인가?', '3주 죄사함과 승리는 무엇인가?', '4주 교회는 무엇인가'].map((item) => `
             <article class="newcomer-week-card">
@@ -2140,9 +2352,15 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
         <div class="newcomer-photo-grid-8">
           ${Array.from({ length: 8 }).map((_, index) => `<div class="placeholder-box small">교육 사진 ${index + 1}</div>`).join('')}
         </div>
+        <dl class="newcomer-education-meta">
+          <div><dt>과정</dt><dd>4주 양육과정</dd></div>
+          <div><dt>시간</dt><dd>매주 주일</dd></div>
+          <div><dt>장소</dt><dd>교회 2층 카페헤슨 큰 모듬방</dd></div>
+        </dl>
       </section>
       <section id="section-newcomers-helper" class="panel newcomers-helper-panel">
-        ${sectionTitle('Helper', '새가족 섬김이', '처음 오신 분들이 혼자 남지 않도록 팀별 섬김이가 함께합니다.')}
+        ${newcomerSectionHead('SEC-05', '새가족 섬김이', '처음 오신 날부터 곁에서 함께하는 섬김이가 있습니다')}
+        ${sectionNavigator('', newcomerNavItems, 'section-newcomers-helper', 'newcomers', '처음오셨나요 섹션 이동')}
         <div class="newcomer-helper-layout">
           <div class="newcomer-helper-row is-two">
             <article class="newcomer-helper-team-card">
@@ -2187,8 +2405,10 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
         </div>
       </section>
       <section id="section-newcomers-welcome-party" class="panel newcomers-gallery-panel">
-        ${sectionTitle('Gallery', '새가족환영회', '환영회 사진을 최근 게시물과 연도별 카테고리로 확인할 수 있는 갤러리형 영역입니다.')}
+        ${newcomerSectionHead('SEC-06', '새가족 환영회', '새 가족을 맞이했던 반가운 순간들입니다')}
+        ${sectionNavigator('', newcomerNavItems, 'section-newcomers-welcome-party', 'newcomers', '처음오셨나요 섹션 이동')}
         <div class="newcomer-year-filter">
+          <strong>연도별 보기</strong>
           ${['전체', '2026', '2025', '2024', '2023'].map((year, index) => `<span class="${index === 0 ? 'is-active' : ''}">${escapeHtml(year)}</span>`).join('')}
         </div>
         <div class="grid grid-3">
@@ -2205,8 +2425,10 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
         </div>
       </section>
       <section id="section-newcomers-weekly-family" class="panel newcomers-weekly-panel">
-        ${sectionTitle('Weekly', '금주의 새가족', '이번 주 등록한 새가족을 해시태그와 최근 게시물 형식으로 소개합니다.')}
+        ${newcomerSectionHead('SEC-07', '금주의 새가족', '이번 주 우리 가족이 된 분들을 함께 반겨주세요')}
+        ${sectionNavigator('', newcomerNavItems, 'section-newcomers-weekly-family', 'newcomers', '처음오셨나요 섹션 이동')}
         <div class="newcomer-tag-row">
+          <strong>분류별 보기</strong>
           ${['#전체', '#믿음교구', '#소망교구', '#청년부', '#첫방문', '#새가족교육'].map((tag, index) => `<span class="${index === 0 ? 'is-active' : ''}">${escapeHtml(tag)}</span>`).join('')}
         </div>
         <div class="grid grid-3">
@@ -2322,18 +2544,60 @@ function renderNewcomerWelcomePartyPage() {
 function renderChurchDirectionsPage() {
   const source = data.pages.newcomers;
   const page = getNavItem('church/directions');
+  const routeGroups = [
+    ['버스', '간선 101, 106, 107, 108, 120, 130, 140, 141, 142, 150, 160, 161, 170 / 지선 1018, 1148, 1151'],
+    ['지하철', '4호선 수유역 2번 출구에서 강북경찰서 방향으로 이동 후 오패산 터널 사거리에서 좌회전'],
+    ['자가용', '네비게이션에서 번동제일교회 또는 덕릉로 40다길 13을 검색합니다. 주일에는 현장 안내에 따라 주차합니다.'],
+  ];
+  const directionsNavItems = [
+    ['directions-section-intro', '오시는 길'],
+    ['directions-section-map', '지도와 방문 정보'],
+    ['directions-section-route', '교통 안내'],
+  ];
   const content = `
-      <section class="panel">
-        ${sectionTitle('Directions', '오시는 길')}
-        <div class="grid grid-2">
-          <div class="placeholder-box tall">카카오맵 / 네이버지도 연동 영역</div>
-          <article class="card">
-            <h3>주소 / 연락처</h3>
-            <p>${escapeHtml(source.directions.address)}</p>
-            <p>${escapeHtml(source.directions.phone)}</p>
-            <ul class="bullet-list">
-              ${source.directions.transport.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
-            </ul>
+      <section id="directions-section-intro" class="panel directions-intro-panel">
+        <div class="section-head section-head-center">
+          <div>
+            <span class="eyebrow">SEC-01</span>
+            <h2>언제든지 오세요, 기다리고 있습니다</h2>
+            <p>대중교통과 자가용 이용 방법, 주차 안내까지 찾아오시는 길을 안내합니다.</p>
+          </div>
+        </div>
+      </section>
+      <section id="directions-section-map" class="panel directions-map-panel">
+        ${sectionNavigator('SEC-02', directionsNavItems, 'directions-section-map', 'church/directions', '오시는 길 섹션 이동')}
+        <div class="directions-reference-layout">
+          <div class="directions-map-placeholder is-reference">카카오맵 / 네이버지도 연동 영역</div>
+          <div class="directions-contact-strip">
+            <div>
+              <span>주소</span>
+              <strong>${escapeHtml(source.directions.address)}</strong>
+            </div>
+            <div>
+              <span>문의</span>
+              <strong>${escapeHtml(source.directions.phone)}</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="directions-section-route" class="panel directions-map-panel directions-route-panel">
+        ${sectionNavigator('SEC-03', directionsNavItems, 'directions-section-route', 'church/directions', '오시는 길 섹션 이동')}
+        <div class="directions-reference-routes">
+          ${routeGroups.map(([title, body]) => `
+            <article>
+              <span>${escapeHtml(title)}</span>
+              <div>
+                <h3>${escapeHtml(title)}</h3>
+                <p>${escapeHtml(body)}</p>
+              </div>
+            </article>
+          `).join('')}
+          <article>
+            <span>안내</span>
+            <div>
+              <h3>처음 오셨다면</h3>
+              <p>본관 입구 또는 안내 데스크에서 새가족 안내를 받을 수 있습니다.</p>
+            </div>
           </article>
         </div>
       </section>
@@ -2647,6 +2911,7 @@ function renderRouteDraft(key) {
       return renderChurchDirectionsPage();
     case 'newcomers':
       return renderNewcomerGreetingPage(key);
+    case 'newcomers/greeting':
     case 'newcomers/registration':
     case 'newcomers/education':
     case 'newcomers/helper':
@@ -2889,6 +3154,7 @@ function renderRoute(key) {
       return renderChurchDirectionsPage();
     case 'newcomers':
       return renderNewcomerGreetingPage(key);
+    case 'newcomers/greeting':
     case 'newcomers/registration':
     case 'newcomers/education':
     case 'newcomers/helper':
