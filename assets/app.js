@@ -93,7 +93,8 @@ const NAV_STRUCTURE = [
     label: '예배안내',
     items: [
       { route: 'worship', label: '예배시간/장소', summary: '주일예배와 교회학교 예배 시간, 장소를 표로 확인하는 화면입니다.' },
-      { route: 'worship/shuttle', label: '차량운행안내', summary: '차량 코스와 탑승 안내를 중심으로 구성한 안내형 화면입니다.' },
+      { route: 'worship/school', label: '교회학교 예배', summary: '각 부서별 예배 시간과 장소를 확인하는 화면입니다.' },
+      { route: 'worship/shuttle', label: '차량운행안내', summary: '주일 차량 코스와 운행 시간표를 중심으로 구성한 안내형 화면입니다.' },
     ],
   },
   {
@@ -101,10 +102,11 @@ const NAV_STRUCTURE = [
     label: '말씀&찬양',
     items: [
       { route: 'media', label: '주일예배', summary: '주일예배 영상과 설교 요약을 중심으로 한 대표 미디어 화면입니다.' },
-      { route: 'media/wednesday', label: '수요예배', summary: '수요예배 영상과 최근 말씀 목록을 보여주는 화면입니다.' },
-      { route: 'media/praise', label: '오후찬양예배', summary: '오후찬양예배 영상과 찬양 중심 콘텐츠를 배치한 화면입니다.' },
       { route: 'media/youth', label: '청년예배', summary: '청년예배 영상, 모임 안내, 관련 콘텐츠를 묶어 보여주는 화면입니다.' },
-      { route: 'media/friday', label: '금요저녁예배', summary: '금요저녁예배 영상 아카이브와 최근 업로드를 정리한 화면입니다.' },
+      { route: 'media/praise', label: '찬양예배', summary: '찬양으로 함께 드리는 주일 오후 예배 영상 화면입니다.' },
+      { route: 'media/prayer', label: '기도회', summary: '수요기도회, 금요기도회, 새벽기도회 영상을 묶어 보여주는 화면입니다.' },
+      { route: 'media/choir', label: '찬양대', summary: '찬양대의 찬양 영상을 모아 보여주는 화면입니다.' },
+      { route: 'media/events', label: '집회 및 행사', summary: '집회와 행사 영상 콘텐츠를 모아 보여주는 화면입니다.' },
     ],
   },
   {
@@ -122,7 +124,16 @@ const NAV_STRUCTURE = [
 const LANDING_SCROLL_TARGETS = {
   worship: {
     worship: 'section-worship-times',
+    'worship/school': 'section-worship-school',
     'worship/shuttle': 'section-worship-shuttle',
+  },
+  media: {
+    media: 'section-media-sunday',
+    'media/youth': 'section-media-youth',
+    'media/praise': 'section-media-praise',
+    'media/prayer': 'section-media-prayer',
+    'media/choir': 'section-media-choir',
+    'media/events': 'section-media-events',
   },
   newcomers: {
     'newcomers/greeting': 'section-newcomers-greeting',
@@ -1542,7 +1553,7 @@ function renderSubpageScaffold(key, page, content) {
   const currentGroupLabel = navGroup ? navGroup.label : meta.group;
   const currentItemLabel = navItem ? navItem.label : pageTitle;
   const subNavItems = navGroup ? navGroup.items : [{ route: key, label: pageTitle }];
-  const compactSubHeaderClass = ['church', 'newcomers'].includes(groupKey) ? ' page-shell--flat-sub-header' : '';
+  const compactSubHeaderClass = ['church', 'newcomers', 'worship', 'media'].includes(groupKey) ? ' page-shell--flat-sub-header' : '';
 
   return `
     <main class="inner page-shell${compactSubHeaderClass}">
@@ -2128,15 +2139,57 @@ function renderChurchOrganizationPage() {
     ['4교구', '4-1 김은경B 집사 / 이정순A 명권 · 4-10 김명옥A 권사 / 이은혜 집사 · 4-19 조혜윤 집사 / 박종림 권사, 김수정 집사 · 4-28 이정자 권사 / 최영희 권사, 김덕희 권사 · 4-35 오선숙 권사 / 장윤순 명권, 김현아 집사'],
     ['젊은교구', '1구역 김수영 집사 · 2구역 백경아 집사 · 3구역 연수림 집사'],
   ];
+  const institutionMeetings = [
+    ['첫째주', [
+      ['정기제직회(분기별)', '주일 오후 예배 후(1, 4, 7, 10월)', '본당 / 본관 3층'],
+      ['장로회', '주일 Ⅲ부 예배 후', '은퇴장로회실 / 본관 4층'],
+      ['제1여전도회', '주일 Ⅲ부 예배 후(낮 12:30)', '호산나찬양대실 / 본관 3층'],
+      ['제2여전도회', '주일 Ⅲ부 예배 후', '유치부실 / 교육관 1층'],
+      ['제3여전도회', '주일 Ⅲ부 예배 후(낮 12:50)', '유아부실 / 교육관 1층'],
+      ['제5여전도회', '주일 Ⅲ부 예배 후(오후 1시)', '초등1부실 / 교육관 2층'],
+    ]],
+    ['둘째주', [
+      ['아브라함회', '주일 Ⅲ부 예배 후(오후 1시)', '유치부실 / 본관 2층'],
+      ['제2남선교회', '주일 Ⅲ부 예배 후', '헤븐 작은모둠방 / 본관 2층'],
+      ['제3남선교회', '주일 Ⅲ부 예배 후', '헤븐 탑뉴스 / 본관 2층'],
+      ['제4남선교회', '주일 Ⅲ부 예배 후', '헤븐 작은모둠방 / 본관 2층'],
+      ['제5남선교회', '주일 Ⅲ부 예배 후', '헤븐 쉴만한창가 / 본관 2층'],
+      ['제4여전도회', '주일 Ⅲ부 예배 후(오후 1:20)', '초등1부실 / 교육관 2층'],
+      ['제6여전도회', '주일 Ⅲ부 예배 후(오후 12:50)', '꿈꾸는방 / 본관 3층'],
+    ]],
+    ['셋째주', [
+      ['제1남선교회', '주일 Ⅲ부 예배 후', '헤븐 큰모둠방 / 본관 2층'],
+      ['제6남선교회', '주일 Ⅲ부 예배 후', '헤븐 작은모둠방 / 본관 2층'],
+      ['명예권사회', '주일 Ⅲ부 예배', '시온찬양대실 / 본관 3층'],
+      ['제7여전도회', '주일 Ⅲ부 예배 후(오후 1:30)', '꿈꾸는방 / 교육관 3층'],
+      ['제8여전도회', '주일 Ⅲ부 예배 후(오후 1:30)', '헤븐 큰모둠방 / 본관 2층'],
+      ['제9여전도회', '주일 Ⅲ부 예배 후(오후 1시)', '유치부실 / 교육관 1층'],
+    ]],
+    ['넷째주', [
+      ['당회', '주일 오후 찬양예배 후', '당회실 / 본관 4층'],
+      ['안수집사회', '주일 Ⅲ부 예배 후', '헤븐 큰모둠방 / 본관 2층'],
+      ['제7남선교회', '주일 Ⅲ부 예배 후', '방송실 / 본관 5층'],
+      ['권사회', '주일 Ⅲ부 예배 후', '본당 / 본관 4층'],
+      ['유니게회', '주일 Ⅲ부 예배 후(낮 12:50)', '유치부실 / 교육관 1층'],
+      ['제10여전도회', '주일 Ⅲ부 예배 후', '영아부실 / 본관 1층'],
+    ]],
+  ];
   const organizationNavItems = [
     ['organization-section-intro', '교회조직'],
-    ['organization-section-governance', '상위 조직'],
+    ['organization-section-governance', '교회 운영 구조'],
     ['organization-section-education', '교육부'],
     ['organization-section-youth', '청년부'],
     ['organization-section-choir', '찬양대'],
     ['section-departments', '부서소개'],
     ['section-parishes', '교구소개'],
   ];
+  const organizationSectionHead = (eyebrow, title, summary) => `
+    <div class="newcomer-section-head organization-section-head">
+      <span class="eyebrow">${escapeHtml(eyebrow)}</span>
+      <h2>${escapeHtml(title)}</h2>
+      <p>${escapeHtml(summary)}</p>
+    </div>
+  `;
   const content = `
       <section id="organization-section-intro" class="church-landing-hero panel organization-hero-panel">
         <div class="church-landing-hero__media">조직 흐름 요약 영역</div>
@@ -2149,12 +2202,13 @@ function renderChurchOrganizationPage() {
         </div>
       </section>
       <section id="organization-section-governance" class="panel organization-rhythm">
-        ${sectionNavigator('SEC-02', organizationNavItems, 'organization-section-governance', 'church/organization', '교회조직 섹션 이동')}
+        ${organizationSectionHead('SEC-02', '교회 운영 구조', '교회를 이끄는 기관입니다.')}
+        ${sectionNavigator('', organizationNavItems, 'organization-section-governance', 'church/organization', '교회조직 섹션 이동')}
         <div class="organization-governance-grid">
           <article class="organization-card">
             <small>01</small>
             <h3>공동의회</h3>
-            <p>교회의 중요한 의사를 함께 확인하고 결정하는 회의입니다.</p>
+            <p>교회의 중요한 결정을 모든 교인이 함께 의논하고 결정하는 모임입니다.</p>
             <div class="organization-governance-list">
               <div><strong>의장</strong><span>황대석 목사</span></div>
               <div><strong>서기</strong><span>최병욱 장로</span></div>
@@ -2165,7 +2219,7 @@ function renderChurchOrganizationPage() {
           <article class="organization-card">
             <small>02</small>
             <h3>당회</h3>
-            <p>목회와 행정의 주요 방향을 살피고 교회의 질서를 세웁니다.</p>
+            <p>담임목사와 장로들이 교회의 신앙과 방향을 함께 이끌어가는 기관입니다.</p>
             <div class="organization-governance-list">
               <div><strong>담임</strong><span>황대석 목사</span></div>
               <div><strong>시무</strong><span>이선규A, 이선규B, 최병욱, 이현우, 안동찬, 홍도희, 이호철, 조계완, 서현철, 김희진, 최상균 장로</span></div>
@@ -2174,16 +2228,36 @@ function renderChurchOrganizationPage() {
           <article class="organization-card">
             <small>03</small>
             <h3>제직회</h3>
-            <p>각 부서와 사역이 실제로 움직이도록 실행과 운영을 맡습니다.</p>
+            <p>각 직분자들이 교회 운영과 봉사를 함께 논의하고 실행하는 모임입니다.</p>
             <div class="organization-governance-list">
               <div><strong>구성</strong><span>목사, 장로, 안수집사, 권사, 집사 등 제직</span></div>
               <div><strong>실행</strong><span>예배부, 찬양부, 서무부, 총무부, 재정부, 관리부, 봉사부, 교육부, 전도부 등</span></div>
             </div>
           </article>
         </div>
+        <details class="organization-list-details organization-meeting-details">
+          <summary>각 기관 집회안내</summary>
+          <div class="organization-meeting-list">
+            ${institutionMeetings.map(([week, meetings]) => `
+              <article class="organization-meeting-group">
+                <h3>${escapeHtml(week)}</h3>
+                <div class="organization-meeting-rows">
+                  ${meetings.map(([name, time, place]) => `
+                    <div class="organization-meeting-row">
+                      <strong>${escapeHtml(name)}</strong>
+                      <span>${escapeHtml(time)}</span>
+                      <em>${escapeHtml(place)}</em>
+                    </div>
+                  `).join('')}
+                </div>
+              </article>
+            `).join('')}
+          </div>
+        </details>
       </section>
       <section id="organization-section-education" class="panel organization-rhythm">
-        ${sectionNavigator('SEC-03', organizationNavItems, 'organization-section-education', 'church/organization', '교회조직 섹션 이동')}
+        ${organizationSectionHead('SEC-03', '교육부 소개', '다음 세대를 말씀으로 세웁니다.')}
+        ${sectionNavigator('', organizationNavItems, 'organization-section-education', 'church/organization', '교회조직 섹션 이동')}
         <div class="organization-age-grid">
           ${education.map(([title, detail, href]) => `
             <article class="organization-age-card">
@@ -2196,7 +2270,8 @@ function renderChurchOrganizationPage() {
         </div>
       </section>
       <section id="organization-section-youth" class="panel organization-rhythm">
-        ${sectionNavigator('SEC-04', organizationNavItems, 'organization-section-youth', 'church/organization', '교회조직 섹션 이동')}
+        ${organizationSectionHead('SEC-04', '청년부 소개', '청년들이 함께 예배하고 교제합니다.')}
+        ${sectionNavigator('', organizationNavItems, 'organization-section-youth', 'church/organization', '교회조직 섹션 이동')}
         <div class="organization-youth-feature">
           <div class="organization-photo is-wide">청년부 예배 사진 영역</div>
           <div class="organization-youth-grid">
@@ -2207,7 +2282,8 @@ function renderChurchOrganizationPage() {
         </div>
       </section>
       <section id="organization-section-choir" class="panel organization-rhythm">
-        ${sectionNavigator('SEC-05', organizationNavItems, 'organization-section-choir', 'church/organization', '교회조직 섹션 이동')}
+        ${organizationSectionHead('SEC-05', '찬양대 소개', '예배를 섬기는 찬양의 공동체입니다.')}
+        ${sectionNavigator('', organizationNavItems, 'organization-section-choir', 'church/organization', '교회조직 섹션 이동')}
         <div class="organization-choir-grid">
           ${choirs.map(([title, detail]) => `
             <article class="organization-name-panel">
@@ -2226,7 +2302,8 @@ function renderChurchOrganizationPage() {
         </details>
       </section>
       <section id="section-departments" class="panel organization-rhythm">
-        ${sectionNavigator('SEC-06', organizationNavItems, 'section-departments', 'church/organization', '교회조직 섹션 이동')}
+        ${organizationSectionHead('SEC-06', '부서 소개', '각 부서가 하나의 교회를 이룹니다.')}
+        ${sectionNavigator('', organizationNavItems, 'section-departments', 'church/organization', '교회조직 섹션 이동')}
         <div class="organization-unit-grid">
           ${units.map(([title, body, leader, featured]) => `
             <article class="organization-unit-card ${featured ? 'is-featured' : ''}">
@@ -2244,7 +2321,8 @@ function renderChurchOrganizationPage() {
         </details>
       </section>
       <section id="section-parishes" class="panel organization-rhythm">
-        ${sectionNavigator('SEC-07', organizationNavItems, 'section-parishes', 'church/organization', '교회조직 섹션 이동')}
+        ${organizationSectionHead('SEC-07', '교구 소개', '가까운 이웃과 함께하는 신앙 공동체입니다.')}
+        ${sectionNavigator('', organizationNavItems, 'section-parishes', 'church/organization', '교회조직 섹션 이동')}
         <div class="organization-parish-list">
           ${parishes.map(([title, leader, area, body, tags]) => `
             <article class="organization-parish-card">
@@ -2608,6 +2686,12 @@ function renderChurchDirectionsPage() {
 function renderWorshipTimesPage(activeRoute = 'worship') {
   const source = data.pages.worship;
   const page = getNavItem(activeRoute) || getNavItem('worship');
+  const worshipNavItems = [
+    ['section-worship-intro', '예배안내'],
+    ['section-worship-times', '예배시간/장소'],
+    ['section-worship-school', '교회학교 예배'],
+    ['section-worship-shuttle', '차량운행안내'],
+  ];
   const weekdayWorship = [
     ['찬양예배', '주일 오후 2:50', '본당'],
     ['수요 1부 예배', '수요일 오전 10:30', '본당'],
@@ -2617,8 +2701,19 @@ function renderWorshipTimesPage(activeRoute = 'worship') {
     ['심야예배', '금요일 저녁 8:00', '본당'],
   ];
   const content = `
+      <section id="section-worship-intro" class="church-landing-hero panel worship-hero-panel">
+        <div class="church-landing-hero__media">예배 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <h2>예배가 삶의 중심이 되는 교회입니다</h2>
+          <div class="church-landing-hero__intro">
+            <p>하나님께 드리는 예배가 날마다 이어지는 공동체입니다.</p>
+          </div>
+        </div>
+      </section>
       <section id="section-worship-times" class="panel worship-info-panel">
-        ${sectionTitle('Worship', '예배시간과 장소', '처음 오신 분도 예배 시간과 장소를 바로 확인할 수 있도록 정리합니다.')}
+        ${sectionTitle('SEC-02', '예배 시간과 장소 안내', '모든 예배 일정을 확인하세요.')}
+        ${sectionNavigator('', worshipNavItems, 'section-worship-times', 'worship', '예배안내 섹션 이동')}
         <div class="worship-table-card">
           <div class="worship-table-card__head">
             <strong>주일예배</strong>
@@ -2645,7 +2740,8 @@ function renderWorshipTimesPage(activeRoute = 'worship') {
         </div>
       </section>
       <section id="section-worship-school" class="panel worship-school-panel">
-        ${sectionTitle('School', '교회학교 예배', '자녀 연령에 맞는 부서와 예배 장소를 한눈에 확인합니다.')}
+        ${sectionTitle('SEC-03', '교회학교 예배 안내', '각 부서별 예배 시간을 확인하세요.')}
+        ${sectionNavigator('', worshipNavItems, 'section-worship-school', 'worship', '예배안내 섹션 이동')}
         <div class="worship-school-grid">
           ${source.schoolTimes.map((row) => `
             <article class="worship-school-card">
@@ -2746,7 +2842,13 @@ function renderWorshipShuttleContent() {
   ];
   const content = `
       <section id="section-worship-shuttle" class="panel shuttle-route-panel">
-        ${sectionTitle('Shuttle', '차량운행안내', '예배 전 탑승 시간과 정차 지점을 코스별로 빠르게 확인합니다.')}
+        ${sectionTitle('SEC-04', '차량 운행 안내', '주일 운행 노선과 시간표를 확인하세요.')}
+        ${sectionNavigator('', [
+          ['section-worship-intro', '예배안내'],
+          ['section-worship-times', '예배시간/장소'],
+          ['section-worship-school', '교회학교 예배'],
+          ['section-worship-shuttle', '차량운행안내'],
+        ], 'section-worship-shuttle', 'worship', '예배안내 섹션 이동')}
         <div class="shuttle-route-grid">
           ${shuttleRoutes.map((item) => `
             <article class="shuttle-route-card">
@@ -2767,19 +2869,6 @@ function renderWorshipShuttleContent() {
           `).join('')}
         </div>
       </section>
-      <section class="panel shuttle-notice-panel">
-        ${sectionTitle('Boarding', '탑승 안내')}
-        <article class="shuttle-notice-card">
-          <strong>방문 전 확인하면 좋은 정보</strong>
-          <p>차량 운행은 교통 상황과 교회 사정에 따라 조정될 수 있으므로, 처음 이용하시는 분은 교회 사무실 또는 안내팀에 한 번 더 확인할 수 있도록 안내 영역을 둡니다.</p>
-          <div class="shuttle-notice-tags">
-            <span>정차 지점</span>
-            <span>탑승 시간</span>
-            <span>귀가 운행</span>
-            <span>문의 안내</span>
-          </div>
-        </article>
-      </section>
   `;
   return content;
 }
@@ -2790,49 +2879,123 @@ function renderWorshipShuttlePage() {
 
 function renderMediaCategoryPage(routeKey) {
   const source = data.pages.media;
-  const page = getNavItem(routeKey);
-  const content = `
-      <section class="panel">
-        ${sectionTitle('Featured', page.label)}
-        <div class="grid grid-media">
-          <article class="card card-dark">
-            <div class="placeholder-box video">${escapeHtml(page.label)} 영상 플레이어</div>
-            <h3>${escapeHtml(source.featured.title)}</h3>
-            <p>${escapeHtml(source.featured.bible)}</p>
-            <span class="meta">${escapeHtml(source.featured.preacher)} · ${escapeHtml(source.featured.date)}</span>
-          </article>
-          <article class="card">
-            <h3>최근 말씀 요약</h3>
-            <p>${escapeHtml(page.summary)}</p>
-            <div class="callout">
-              <p>본문, 설교 제목, 설교자, 요약문, 적용 포인트를 카드형으로 정리합니다.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-      <section class="panel">
-        ${sectionTitle('Archive', `${page.label} 최근 영상`)}
-        <div class="grid grid-3">
-          ${[1, 2, 3].map((index) => `
-            <article class="card">
-              <div class="placeholder-box small">${escapeHtml(page.label)} 썸네일 ${index}</div>
-              <h3>${escapeHtml(page.label)} 최근 영상 ${index}</h3>
+  const page = getNavItem(routeKey) || getNavItem('media');
+  const mediaNavItems = [
+    ['section-media-intro', '말씀&찬양'],
+    ['section-media-sunday', '주일예배'],
+    ['section-media-youth', '청년예배'],
+    ['section-media-praise', '찬양예배'],
+    ['section-media-prayer', '기도회'],
+    ['section-media-choir', '찬양대'],
+    ['section-media-events', '집회 및 행사'],
+  ];
+  const recentVideos = (label, categories = []) => [1, 2, 3].map((index) => {
+    const category = categories[index - 1] || '';
+    const cardLabel = category || label;
+    return `
+            <article class="media-video-card">
+              <div class="placeholder-box small">${escapeHtml(cardLabel)} 썸네일</div>
+              ${category ? `<span class="media-video-category">${escapeHtml(category)}</span>` : ''}
+              <h3>${escapeHtml(cardLabel)} 최근 영상</h3>
               <p>영상 제목 / 날짜 / 짧은 설명이 들어가는 카드형 목록</p>
             </article>
-          `).join('')}
+          `;
+  }).join('');
+  const lineMenu = (items) => `
+        <div class="media-line-menu" aria-label="분류별 보기">
+          ${items.map((item, index) => `<span class="${index === 0 ? 'is-active' : ''}">${escapeHtml(item)}</span>`).join('')}
+        </div>
+  `;
+  const mediaSection = ({ id, eyebrow, title, summary, active, menu, categories = [], featured = false }) => `
+      <section id="${escapeHtml(id)}" class="panel media-section-panel">
+        ${sectionTitle(eyebrow, title, summary)}
+        ${sectionNavigator('', mediaNavItems, active, 'media', '말씀&찬양 섹션 이동')}
+        ${menu ? lineMenu(menu) : ''}
+        ${featured ? `
+          <div class="media-feature-layout media-feature-layout--single">
+            <article class="media-feature-card">
+              <div class="placeholder-box video">주일예배 영상 플레이어</div>
+              <h3>${escapeHtml(source.featured.title)}</h3>
+              <p>${escapeHtml(source.featured.bible)}</p>
+              <span class="meta">${escapeHtml(source.featured.preacher)} · ${escapeHtml(source.featured.date)}</span>
+            </article>
+          </div>
+          <div class="media-video-row">
+            ${recentVideos('주일예배')}
+          </div>
+          <div class="button-row centered media-more-row">
+            <a class="button button-secondary" href="${routeHref('media')}">전체보기</a>
+          </div>
+        ` : `
+          <div class="media-video-row">
+            ${recentVideos(title.replace(' 최근 영상', ''), categories)}
+          </div>
+          <div class="button-row centered media-more-row">
+            <a class="button button-secondary" href="${routeHref('media')}">전체보기</a>
+          </div>
+        `}
+      </section>
+  `;
+  const content = `
+      <section id="section-media-intro" class="church-landing-hero panel media-hero-panel">
+        <div class="church-landing-hero__media">말씀과 찬양 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <h2>말씀과 찬양으로 하나님을 만나는 시간입니다</h2>
+          <div class="church-landing-hero__intro">
+            <p>번동제일교회는 선포되는 말씀과<br>드려지는 찬양 안에서 하나님의 임재를 경험하는 공동체입니다.</p>
+          </div>
         </div>
       </section>
-      <section class="panel">
-        ${sectionTitle('Channel', '유튜브 채널 연결')}
-        <article class="card">
-          <ul class="bullet-list">
-            ${source.extras.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
-          </ul>
-          <div class="button-row">
-            <a class="button" href="${routeHref('media')}">유튜브 채널 바로가기</a>
-          </div>
-        </article>
-      </section>
+      ${mediaSection({
+        id: 'section-media-sunday',
+        eyebrow: 'SEC-02',
+        title: '주일예배',
+        summary: '한 주간을 붙들고 살 말씀을 만나보세요.',
+        active: 'section-media-sunday',
+        featured: true,
+      })}
+      ${mediaSection({
+        id: 'section-media-youth',
+        eyebrow: 'SEC-03',
+        title: '청년예배',
+        summary: '청년들이 함께 드리는 주일 예배입니다.',
+        active: 'section-media-youth',
+      })}
+      ${mediaSection({
+        id: 'section-media-praise',
+        eyebrow: 'SEC-04',
+        title: '찬양예배',
+        summary: '찬양으로 함께 드리는 주일 오후 예배입니다.',
+        active: 'section-media-praise',
+      })}
+      ${mediaSection({
+        id: 'section-media-prayer',
+        eyebrow: 'SEC-05',
+        title: '기도회',
+        summary: '말씀과 기도로 한 주간을 준비하는 시간입니다.',
+        active: 'section-media-prayer',
+        menu: ['전체', '수요기도회', '금요기도회', '새벽기도회'],
+        categories: ['수요기도회', '금요기도회', '새벽기도회'],
+      })}
+      ${mediaSection({
+        id: 'section-media-choir',
+        eyebrow: 'SEC-06',
+        title: '찬양대',
+        summary: '하나님께 영광 돌리는 찬양대의 찬양입니다.',
+        active: 'section-media-choir',
+        menu: ['전체', '1부 브니엘', '2부 호산나', '3부 시온'],
+        categories: ['1부 브니엘', '2부 호산나', '3부 시온'],
+      })}
+      ${mediaSection({
+        id: 'section-media-events',
+        eyebrow: 'SEC-07',
+        title: '집회 및 행사',
+        summary: '특별한 은혜와 기쁨의 시간들입니다.',
+        active: 'section-media-events',
+        menu: ['전체', '집회', '행사', '기타'],
+        categories: ['집회', '행사', '기타'],
+      })}
   `;
   return renderSubpageScaffold(routeKey, page, content);
 }
@@ -2921,13 +3084,23 @@ function renderRouteDraft(key) {
       return renderNewcomerGreetingPage(key);
     case 'worship':
       return renderWorshipTimesPage();
+    case 'worship/school':
+      pendingScrollTarget = getLandingScrollTarget(key);
+      return renderWorshipTimesPage('worship/school');
     case 'worship/shuttle':
+      pendingScrollTarget = getLandingScrollTarget(key);
       return renderWorshipShuttlePage();
     case 'media':
-    case 'media/wednesday':
-    case 'media/praise':
     case 'media/youth':
+    case 'media/praise':
+    case 'media/prayer':
+    case 'media/choir':
+    case 'media/events':
+      pendingScrollTarget = getLandingScrollTarget(key);
+      return renderMediaCategoryPage(key);
+    case 'media/wednesday':
     case 'media/friday':
+      pendingScrollTarget = 'section-media-prayer';
       return renderMediaCategoryPage(key);
     case 'news':
       return renderNewsBoardPage();
@@ -3164,13 +3337,23 @@ function renderRoute(key) {
       return renderNewcomerGreetingPage(key);
     case 'worship':
       return renderWorshipTimesPage();
+    case 'worship/school':
+      pendingScrollTarget = getLandingScrollTarget(key);
+      return renderWorshipTimesPage('worship/school');
     case 'worship/shuttle':
+      pendingScrollTarget = getLandingScrollTarget(key);
       return renderWorshipShuttlePage();
     case 'media':
-    case 'media/wednesday':
-    case 'media/praise':
     case 'media/youth':
+    case 'media/praise':
+    case 'media/prayer':
+    case 'media/choir':
+    case 'media/events':
+      pendingScrollTarget = getLandingScrollTarget(key);
+      return renderMediaCategoryPage(key);
+    case 'media/wednesday':
     case 'media/friday':
+      pendingScrollTarget = 'section-media-prayer';
       return renderMediaCategoryPage(key);
     case 'news':
       return renderNewsBoardPage();
