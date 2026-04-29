@@ -407,6 +407,10 @@ function renderHeader(activeKey) {
       </div>
       ${renderMegaMenu()}
     </header>
+    <button class="mobile-menu-fab" type="button" aria-expanded="false" aria-controls="mobile-nav-drawer">
+      <span class="menu-toggle__bars" aria-hidden="true"></span>
+      <span>메뉴</span>
+    </button>
     ${renderMobileDrawer(activeKey)}
   `;
 }
@@ -3710,7 +3714,8 @@ function renderRouteLegacy(key) {
 }
 
 function bindUi() {
-  const menuToggle = document.querySelector('.menu-toggle');
+  const menuToggles = [...document.querySelectorAll('.menu-toggle, .mobile-menu-fab')];
+  const menuToggle = menuToggles[0];
   const nav = document.getElementById('main-nav');
   const header = document.querySelector('.site-header');
   const mega = document.querySelector('.mega-menu');
@@ -3721,7 +3726,9 @@ function bindUi() {
     if (!menuToggle || !mobileDrawer || !mobileOverlay) {
       return;
     }
-    menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggles.forEach((toggle) => {
+      toggle.setAttribute('aria-expanded', String(open));
+    });
     mobileDrawer.setAttribute('aria-hidden', String(!open));
     mobileDrawer.classList.toggle('is-open', open);
     mobileOverlay.hidden = !open;
@@ -3729,10 +3736,12 @@ function bindUi() {
     document.body.classList.toggle('is-mobile-menu-open', open);
   };
 
-  if (menuToggle && mobileDrawer) {
-    menuToggle.addEventListener('click', () => {
-      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-      setMobileMenu(!expanded);
+  if (menuToggles.length && mobileDrawer) {
+    menuToggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        setMobileMenu(!expanded);
+      });
     });
     mobileCloseTriggers.forEach((trigger) => {
       trigger.addEventListener('click', () => setMobileMenu(false));
