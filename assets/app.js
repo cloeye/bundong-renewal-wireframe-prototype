@@ -20,6 +20,13 @@ const SUBPAGE_META = {
     hero: '교회 외관 / 공동체 대표 이미지',
     items: ['우리교회는', '걸어온 길', '시설안내', '교회조직', '섬기는 사람들', '오시는 길'],
   },
+  news: {
+    news: 'section-news-board',
+    'news/bulletin': 'section-news-bulletin',
+    'news/family-worship': 'section-news-family',
+    'news/album': 'section-news-album',
+    'news/resources': 'section-news-resources',
+  },
   newcomers: {
     group: '처음오셨나요',
     hero: '새가족 환영 / 안내 대표 이미지',
@@ -38,7 +45,7 @@ const SUBPAGE_META = {
   news: {
     group: '교회소식',
     hero: '공지 / 주보 대표 이미지',
-    items: ['교회소식', '주보', '자료실'],
+    items: ['교회소식', '주보', '가정예배 순서지', '교회앨범', '기타 자료실'],
   },
   album: {
     group: '교회앨범',
@@ -115,7 +122,9 @@ const NAV_STRUCTURE = [
     items: [
       { route: 'news', label: '교회소식', summary: '공지사항과 주간 소식을 최신순으로 정리한 게시판형 화면입니다.' },
       { route: 'news/bulletin', label: '주보', summary: '최신 주보를 미리보기와 목록으로 확인할 수 있는 화면입니다.' },
-      { route: 'news/resources', label: '자료실', summary: '가정예배 순서지와 공고 자료 등 자료형 게시물을 모아두는 화면입니다.' },
+      { route: 'news/family-worship', label: '가정예배 순서지', summary: '가정예배 순서지를 모아 확인하는 자료실형 화면입니다.' },
+      { route: 'news/album', label: '교회앨범', summary: '카테고리별 교회 앨범을 카드형 게시판으로 확인하는 화면입니다.' },
+      { route: 'news/resources', label: '기타 자료실', summary: '공고와 행정 자료 등 기타 자료형 게시물을 모아두는 화면입니다.' },
     ],
   },
 ];
@@ -155,23 +164,24 @@ function getLandingBaseRoute(route) {
   return LANDING_SCROLL_TARGETS[groupKey] ? groupKey : route;
 }
 
-function renderSubpageSecondMenuItem(item, activeKey) {
+function renderSubpageSecondMenuItem(item, activeKey, options = {}) {
   const target = getLandingScrollTarget(item.route);
+  const hrefRoute = options.landingBaseRoute || item.route;
   const scrollAttr = target ? ` data-scroll-target="${escapeHtml(target)}"` : '';
   const scrollClass = target ? ' is-scroll-link' : '';
   return `
-                  <a class="${item.route === activeKey ? 'is-current' : ''}${scrollClass}" href="${routeHref(item.route)}"${scrollAttr}>
+                  <a class="${item.route === activeKey ? 'is-current' : ''}${scrollClass}" href="${routeHref(hrefRoute)}"${scrollAttr}>
                     ${escapeHtml(item.label)}
                   </a>
                 `;
 }
 
-function renderSubpageTopTabs(groupLabel, subNavItems, activeKey) {
+function renderSubpageTopTabs(groupLabel, subNavItems, activeKey, options = {}) {
   if (!subNavItems || subNavItems.length < 2) return '';
   return `
       <nav class="subpage-line-tabs" aria-label="${escapeHtml(groupLabel)} 하위 메뉴">
         <div class="subpage-line-tabs__inner">
-          ${subNavItems.map((item) => renderSubpageSecondMenuItem(item, activeKey)).join('')}
+          ${subNavItems.map((item) => renderSubpageSecondMenuItem(item, activeKey, options)).join('')}
         </div>
       </nav>
   `;
@@ -184,12 +194,65 @@ const FOOTER_SHORTCUTS = [
   { label: '유튜브 채널', route: 'media' },
 ];
 
+const ALBUM_CATEGORIES = ['전체', '세례예식', '행사/집회', '예배찬양', '교회학교', '국내선교', '해외선교', '사회봉사', '기타사진'];
+const ALBUM_CATEGORY_SLUGS = {
+  '전체': 'all',
+  '세례예식': 'baptism',
+  '행사/집회': 'events',
+  '예배찬양': 'worship-praise',
+  '교회학교': 'church-school',
+  '국내선교': 'domestic-mission',
+  '해외선교': 'overseas-mission',
+  '사회봉사': 'service',
+  '기타사진': 'etc',
+};
+const ALBUM_CATEGORY_LABELS = Object.fromEntries(Object.entries(ALBUM_CATEGORY_SLUGS).map(([label, slug]) => [slug, label]));
+
+function albumCategoryRoute(label, baseRoute = 'news/album') {
+  const slug = ALBUM_CATEGORY_SLUGS[label] || 'all';
+  return slug === 'all' ? baseRoute : `${baseRoute}/category/${slug}`;
+}
+
+function albumCategoryFromRoute(routeKey) {
+  const slug = String(routeKey || '').split('/category/')[1] || 'all';
+  return ALBUM_CATEGORY_LABELS[slug] || '전체';
+}
+
+const ROUTE_ACTIVE_PARENT = {
+  'news/board': 'news',
+  'media/archive/sunday': 'media',
+  'media/archive/youth': 'media/youth',
+  'media/archive/praise': 'media/praise',
+  'media/archive/prayer': 'media/prayer',
+  'media/archive/prayer/wednesday': 'media/prayer',
+  'media/archive/prayer/friday': 'media/prayer',
+  'media/archive/prayer/dawn': 'media/prayer',
+  'media/archive/choir': 'media/choir',
+  'media/archive/choir/peniel': 'media/choir',
+  'media/archive/choir/hosanna': 'media/choir',
+  'media/archive/choir/zion': 'media/choir',
+  'media/archive/events': 'media/events',
+  'media/archive/events/gathering': 'media/events',
+  'media/archive/events/event': 'media/events',
+  'media/archive/events/etc': 'media/events',
+};
+
+function getActiveNavKey(key) {
+  if (String(key || '').startsWith('news/album/category/')) {
+    return 'news/album';
+  }
+  if (String(key || '').startsWith('album/category/')) {
+    return 'album';
+  }
+  return ROUTE_ACTIVE_PARENT[key] || key;
+}
+
 function getGroupKey(key) {
-  return String(key || '').split('/')[0] || '';
+  return String(getActiveNavKey(key) || '').split('/')[0] || '';
 }
 
 function getNavGroup(key) {
-  const route = String(key || '');
+  const route = String(getActiveNavKey(key) || '');
   const directGroup = NAV_STRUCTURE.find((group) => (group.items || []).some((item) => item.route === route));
   if (directGroup) {
     return directGroup;
@@ -203,11 +266,8 @@ function getNavItem(key) {
   if (!group) {
     return null;
   }
-  return group.items.find((item) => item.route === key) || group.items[0] || null;
-}
-
-function sectionIdForRoute(route) {
-  return ;
+  const route = getActiveNavKey(key);
+  return group.items.find((item) => item.route === route) || group.items[0] || null;
 }
 
 function sectionIdForRoute(route) {
@@ -541,7 +601,7 @@ function renderIntro() {
           <div class="home-intro__copy">
             <h2>${escapeHtml(data.home.intro.headline)}</h2>
             <p>번동제일교회는 오랜 시간 지역과 함께 걸어온 공동체입니다. 보여주기보다 진심으로, 크기보다 온기로 사람을 품어왔습니다. 믿음과 사랑, 섬김의 기쁨이 일상이 되는 교회를 소개합니다.</p>
-            <a class="button button-secondary" href="${routeHref('church')}">번동제일교회는 더 보기</a>
+            <a class="button button-secondary" href="${routeHref('church')}" data-scroll-target="section-core">번동제일교회는 더 보기</a>
           </div>
         </div>
       </div>
@@ -550,6 +610,12 @@ function renderIntro() {
 }
 
 function renderWorshipSummary() {
+  const worshipCardTargets = {
+    '주일예배': 'worship',
+    '청년예배': 'worship',
+    '수요예배': 'worship',
+    '금요예배': 'worship',
+  };
   return `
     <section class="home-worship home-feature-panel home-feature-panel--worship">
       <div class="inner">
@@ -559,14 +625,14 @@ function renderWorshipSummary() {
           ${data.home.worshipCards
             .map(
               (item) => `
-                <article class="card home-worship__card">
+                <a class="card home-worship__card" href="${routeHref(worshipCardTargets[item.title] || 'worship')}" data-scroll-target="section-worship-times">
                   <div class="home-worship__media" aria-hidden="true">
                     <span>예배 사진 영역</span>
                   </div>
                   <h3>${escapeHtml(item.title)}</h3>
                   <p>${escapeHtml(item.detail)}</p>
                   <span class="meta">${escapeHtml(item.place)}</span>
-                </article>
+                </a>
               `
             )
             .join('')}
@@ -591,21 +657,19 @@ function renderNewcomerSummary() {
 }
 
 function renderAlbumSummary() {
-  const albumCategories = ['전체', '세례예식', '행사/집회', '예배찬양', '교회학교', '국내선교', '해외선교', '사회봉사', '기타사진'];
-
   return `
     <section class="home-album">
       <div class="inner">
         ${renderHomeSectionLabel('07', '교회 앨범')}
         ${renderHomeSectionHead('예배와 사랑, 일상이 되는 순간들', '살아 있는 우리 교회의 모습')}
         <div class="home-album__categories" aria-label="교회 앨범 카테고리">
-          ${albumCategories
+          ${ALBUM_CATEGORIES
             .map(
               (item, index) => `
-                <span class="home-album__category ${index === 0 ? 'is-active' : ''}">
+                <a class="home-album__category ${index === 0 ? 'is-active' : ''}" href="${routeHref(albumCategoryRoute(item))}">
                   ${index === 0 ? '<span class="home-album__check">✓</span>' : ''}
                   ${escapeHtml(item)}
-                </span>
+                </a>
               `
             )
             .join('')}
@@ -635,30 +699,35 @@ function renderAlbumSummary() {
 
 function renderMediaSummary() {
   const sermon = data.home.featuredSermon;
+  const subVideoRoutes = {
+    '오후 찬양예배': 'media/archive/praise',
+    '수요 기도회': 'media/archive/prayer/wednesday',
+    '금요 기도회': 'media/archive/prayer/friday',
+  };
   return `
     <section class="home-sermons">
       <div class="inner">
         ${renderHomeSectionLabel('08', '말씀과 찬양')}
         ${renderHomeSectionHead('주일의 말씀, 삶으로 이어지도록', '한 주간의 생명의 말씀들')}
         <div class="home-sermons__main">
-          <div class="placeholder-box video home-sermons__video">주일예배 영상 플레이어</div>
-          <article class="card home-sermons__info">
+          <a class="placeholder-box video home-sermons__video" href="${routeHref('media/archive/sunday')}">주일예배 영상 플레이어</a>
+          <a class="card home-sermons__info" href="${routeHref('media/archive/sunday')}">
             <h3>지난주 말씀</h3>
             <h4>${escapeHtml(sermon.title)}</h4>
             <p>성경본문: ${escapeHtml(sermon.bible)}<br>설교자: ${escapeHtml(sermon.preacher)}<br>날짜: ${escapeHtml(sermon.date)}</p>
             <div class="callout">
               <p>${escapeHtml(sermon.quote)}</p>
             </div>
-          </article>
+          </a>
         </div>
         <div class="home-sermons__subgrid">
           ${data.home.mediaSubVideos
             .map(
               (item) => `
-                <article class="card home-sermons__subitem">
+                <a class="card home-sermons__subitem" href="${routeHref(subVideoRoutes[item] || 'media')}">
                   <div class="placeholder-box small">보조 예배 영상</div>
                   <h3>${escapeHtml(item)}</h3>
-                </article>
+                </a>
               `
             )
             .join('')}
@@ -673,6 +742,7 @@ function renderMediaSummary() {
 
 function renderNewsSummary() {
   const bulletin = data.home.bulletinItems[0];
+  const familyOrderTitle = '2026년 4월 가정예배 순서지';
   return `
     <section class="home-news">
       <div class="inner">
@@ -689,12 +759,21 @@ function renderNewsSummary() {
             <a class="button button-secondary" href="${routeHref('news')}">교회소식 더 보기</a>
           </article>
           <article class="card home-news__panel">
-            <h2>주보와 순서지</h2>
-            <p>금주 주보와 가정예배 순서지</p>
-            <div class="placeholder-box medium home-news__bulletin">주보 PDF 미리보기</div>
-            <div class="home-news__bulletin-title">${bulletin ? escapeHtml(bulletin.title) : '최신 주보'}</div>
-            <div class="home-center">
-              <a class="button button-secondary" href="${routeHref('news')}">주보 / 자료실 보기</a>
+            <h2>최신 주보</h2>
+            <p>최근 게시물의 첨부 이미지를 한눈에 확인하세요.</p>
+            <a class="home-news__bulletin-link" href="${routeHref('news/bulletin')}">
+              <div class="home-news__bulletin-previews" aria-label="최신 주보 첨부 이미지 미리보기">
+                <span>주보 첨부 이미지 1</span>
+                <span>주보 첨부 이미지 2</span>
+              </div>
+              <div class="home-news__bulletin-title">${bulletin ? escapeHtml(bulletin.title) : '최신 주보'}</div>
+            </a>
+            <div class="home-news__order-download">
+              <div>
+                <strong>순서지 다운로드</strong>
+                <span>${escapeHtml(familyOrderTitle)}</span>
+              </div>
+              <a class="button button-secondary" href="${routeHref('news/family-worship')}">다운로드</a>
             </div>
           </article>
         </div>
@@ -723,7 +802,7 @@ function renderFacilitySummary() {
             .join('')}
         </div>
         <div class="home-center">
-          <a class="button button-secondary" href="${routeHref('church')}">상세 시설안내 보기</a>
+          <a class="button button-secondary" href="${routeHref('church/facility')}">상세 시설안내 보기</a>
         </div>
       </div>
     </section>
@@ -1095,48 +1174,52 @@ function renderMedia() {
 }
 
 function renderNews() {
-  const page = data.pages.news;
-  const content = `
-      <section class="panel">
-        ${sectionTitle('News Board', '교회소식')}
-        <ul class="feed-list large">
-          ${page.churchNews
-            .map((item) => `<li><span>${escapeHtml(item[0])}</span><time>${escapeHtml(item[1])}</time></li>`)
-            .join('')}
-        </ul>
-      </section>
-      <section class="panel">
-        ${sectionTitle('Resources', '주보 / 자료실')}
-        <div class="grid grid-2">
-          <article class="card">
-            <div class="placeholder-box tall">최신 주보 PDF 미리보기</div>
-            <p>최신 주보를 메인과 서브에서 바로 열 수 있도록 뷰어형 카드 배치</p>
-          </article>
-          <article class="card">
-            <h3>최근 자료</h3>
-            <ul class="feed-list">
-              ${page.resources
-                .map((item) => `<li><span>${escapeHtml(item[0])}</span><time>${escapeHtml(item[1])}</time></li>`)
-                .join('')}
-            </ul>
-          </article>
-        </div>
-      </section>
-  `;
-  return renderSubpageScaffold('news', page, content);
+  return renderNewsLandingPage('news');
 }
 
-function renderAlbum() {
+function renderAlbum(routeKey = 'album') {
   const page = data.pages.album;
+  const activeCategory = albumCategoryFromRoute(routeKey);
+  const baseRoute = String(routeKey).startsWith('news/') ? 'news/album' : 'album';
+  const visibleItems = activeCategory === '전체'
+    ? page.items
+    : page.items.filter((item) => (item[2] || '기타사진') === activeCategory);
+  const renderBoardSearch = () => `
+    <form class="board-search" role="search" aria-label="교회앨범 검색">
+      <select aria-label="검색 범위">
+        <option>제목</option>
+        <option>제목 + 본문</option>
+      </select>
+      <label>
+        <span class="sr-only">교회앨범 검색어</span>
+        <input type="search" placeholder="검색어를 입력하세요">
+      </label>
+      <button type="button">검색</button>
+    </form>
+  `;
   const content = `
-      <section class="panel">
-        ${sectionTitle('Gallery', '최근 앨범')}
-        <div class="grid grid-4">
-          ${page.items
+      <section class="church-landing-hero panel album-hero-panel">
+        <div class="church-landing-hero__media">교회앨범 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <span class="album-parent-label">교회소식</span>
+          <h2>교회앨범</h2>
+          <div class="church-landing-hero__intro">
+            <p>번동제일교회의 소중한 순간들을 함께 나눕니다.</p>
+          </div>
+        </div>
+      </section>
+      <section id="section-album-board" class="panel news-section-panel album-board-panel album-board-panel--direct">
+        <div class="media-line-menu news-album-menu" aria-label="교회앨범 카테고리">
+          ${ALBUM_CATEGORIES.map((item) => `<a class="${item === activeCategory ? 'is-active' : ''}" href="${routeHref(albumCategoryRoute(item, baseRoute))}">${escapeHtml(item)}</a>`).join('')}
+        </div>
+        <div class="news-album-grid album-board-grid">
+          ${visibleItems
             .map(
               (item) => `
-                <article class="card">
-                  <div class="placeholder-box small">대표 이미지</div>
+                <article class="news-album-card">
+                  <div class="placeholder-box small">사진</div>
+                  <span class="news-album-card__category">${escapeHtml(item[2] || '기타사진')}</span>
                   <h3>${escapeHtml(item[0])}</h3>
                   <span class="meta">${escapeHtml(item[1])}</span>
                 </article>
@@ -1144,22 +1227,17 @@ function renderAlbum() {
             )
             .join('')}
         </div>
-      </section>
-      <section class="panel">
-        ${sectionTitle('Archive', '영상 / 추가 아카이브')}
-        <div class="grid grid-2">
-          <article class="card">
-            <div class="placeholder-box medium">행사 사진 모음</div>
-            <p>절기, 행사, 친교, 교육 사진을 카테고리별로 탐색</p>
-          </article>
-          <article class="card">
-            <div class="placeholder-box medium">동영상 게시판 / 영상 아카이브</div>
-            <p>필요 시 동영상게시판을 앨범 보조 탭으로 연결</p>
-          </article>
+        ${renderBoardSearch()}
+        <div class="news-pagination" aria-label="교회앨범 페이지 이동">
+          <span class="is-current">1</span>
+          <a href="${routeHref('album')}">2</a>
+          <a href="${routeHref('album')}">3</a>
+          <a href="${routeHref('album')}">4</a>
+          <a href="${routeHref('album')}">다음</a>
         </div>
       </section>
   `;
-  return renderSubpageScaffold('album', page, content);
+  return renderSubpageScaffold(routeKey, page, content);
 }
 
 function renderSimplePage(key) {
@@ -1541,9 +1619,9 @@ function renderMemorialPage() {
 }
 
 function renderSubpageScaffold(key, page, content) {
-  const groupKey = getGroupKey(key);
-  const navGroup = getNavGroup(key);
-  const navItem = getNavItem(key);
+  const groupKey = key === 'album' ? 'news' : getGroupKey(key);
+  const navGroup = key === 'album' ? getNavGroup('news') : getNavGroup(key);
+  const navItem = key === 'album' ? getNavItem('news/album') : getNavItem(key);
   const pageTitle = page.title || page.label;
   const pageSummary = page.summary || '';
   const meta = SUBPAGE_META[groupKey] || SUBPAGE_META[key] || {
@@ -1553,7 +1631,11 @@ function renderSubpageScaffold(key, page, content) {
   const currentGroupLabel = navGroup ? navGroup.label : meta.group;
   const currentItemLabel = navItem ? navItem.label : pageTitle;
   const subNavItems = navGroup ? navGroup.items : [{ route: key, label: pageTitle }];
-  const compactSubHeaderClass = ['church', 'newcomers', 'worship', 'media'].includes(groupKey) ? ' page-shell--flat-sub-header' : '';
+  const activeNavKey = getActiveNavKey(key);
+  const subNavOptions = {
+    landingBaseRoute: groupKey === 'news' && key !== 'news' ? 'news' : '',
+  };
+  const compactSubHeaderClass = ['church', 'newcomers', 'worship', 'media', 'news'].includes(groupKey) ? ' page-shell--flat-sub-header' : '';
 
   return `
     <main class="inner page-shell${compactSubHeaderClass}">
@@ -1582,7 +1664,7 @@ function renderSubpageScaffold(key, page, content) {
               <details class="subpage-category-dropdown">
                 <summary>${escapeHtml(currentItemLabel)}</summary>
                 <div class="subpage-category-menu">
-                  ${subNavItems.map((item) => renderSubpageSecondMenuItem(item, key)).join('')}
+                  ${subNavItems.map((item) => renderSubpageSecondMenuItem(item, activeNavKey, subNavOptions)).join('')}
                 </div>
               </details>
             `}
@@ -1591,7 +1673,7 @@ function renderSubpageScaffold(key, page, content) {
         </div>
         <div class="placeholder-box subpage-hero__media">${escapeHtml(meta.hero)}</div>
       </section>
-      ${renderSubpageTopTabs(currentGroupLabel, subNavItems, key)}
+      ${renderSubpageTopTabs(currentGroupLabel, subNavItems, activeNavKey, subNavOptions)}
       <div class="subpage-content">
         ${content}
       </div>
@@ -2877,6 +2959,43 @@ function renderWorshipShuttlePage() {
   return renderWorshipTimesPage('worship/shuttle');
 }
 
+const MEDIA_ARCHIVE_CATEGORY_ROUTES = {
+  prayer: {
+    '전체': 'media/archive/prayer',
+    '수요기도회': 'media/archive/prayer/wednesday',
+    '금요기도회': 'media/archive/prayer/friday',
+    '새벽기도회': 'media/archive/prayer/dawn',
+  },
+  choir: {
+    '전체': 'media/archive/choir',
+    '1부 브니엘': 'media/archive/choir/peniel',
+    '2부 호산나': 'media/archive/choir/hosanna',
+    '3부 시온': 'media/archive/choir/zion',
+  },
+  events: {
+    '전체': 'media/archive/events',
+    '집회': 'media/archive/events/gathering',
+    '행사': 'media/archive/events/event',
+    '기타': 'media/archive/events/etc',
+  },
+};
+
+function renderMediaLineMenu(items, options = {}) {
+  const { activeLabel = items[0] || '', routeMap = null, ariaLabel = '분류별 보기' } = options;
+  return `
+        <div class="media-line-menu" aria-label="${escapeHtml(ariaLabel)}">
+          ${items.map((item) => {
+            const isActive = item === activeLabel;
+            const className = isActive ? 'is-active' : '';
+            if (routeMap && routeMap[item]) {
+              return `<a class="${className}" href="${routeHref(routeMap[item])}">${escapeHtml(item)}</a>`;
+            }
+            return `<span class="${className}">${escapeHtml(item)}</span>`;
+          }).join('')}
+        </div>
+  `;
+}
+
 function renderMediaCategoryPage(routeKey) {
   const source = data.pages.media;
   const page = getNavItem(routeKey) || getNavItem('media');
@@ -2901,16 +3020,11 @@ function renderMediaCategoryPage(routeKey) {
             </article>
           `;
   }).join('');
-  const lineMenu = (items) => `
-        <div class="media-line-menu" aria-label="분류별 보기">
-          ${items.map((item, index) => `<span class="${index === 0 ? 'is-active' : ''}">${escapeHtml(item)}</span>`).join('')}
-        </div>
-  `;
-  const mediaSection = ({ id, eyebrow, title, summary, active, menu, categories = [], featured = false }) => `
+  const mediaSection = ({ id, eyebrow, title, summary, active, menu, categories = [], archiveRoute, categoryRoutes, featured = false }) => `
       <section id="${escapeHtml(id)}" class="panel media-section-panel">
         ${sectionTitle(eyebrow, title, summary)}
         ${sectionNavigator('', mediaNavItems, active, 'media', '말씀&찬양 섹션 이동')}
-        ${menu ? lineMenu(menu) : ''}
+        ${menu ? renderMediaLineMenu(menu, { activeLabel: menu[0], routeMap: categoryRoutes }) : ''}
         ${featured ? `
           <div class="media-feature-layout media-feature-layout--single">
             <article class="media-feature-card">
@@ -2924,14 +3038,14 @@ function renderMediaCategoryPage(routeKey) {
             ${recentVideos('주일예배')}
           </div>
           <div class="button-row centered media-more-row">
-            <a class="button button-secondary" href="${routeHref('media')}">전체보기</a>
+            <a class="button button-secondary" href="${routeHref(archiveRoute)}">전체보기</a>
           </div>
         ` : `
           <div class="media-video-row">
             ${recentVideos(title.replace(' 최근 영상', ''), categories)}
           </div>
           <div class="button-row centered media-more-row">
-            <a class="button button-secondary" href="${routeHref('media')}">전체보기</a>
+            <a class="button button-secondary" href="${routeHref(archiveRoute)}">전체보기</a>
           </div>
         `}
       </section>
@@ -2953,6 +3067,7 @@ function renderMediaCategoryPage(routeKey) {
         title: '주일예배',
         summary: '한 주간을 붙들고 살 말씀을 만나보세요.',
         active: 'section-media-sunday',
+        archiveRoute: 'media/archive/sunday',
         featured: true,
       })}
       ${mediaSection({
@@ -2961,6 +3076,7 @@ function renderMediaCategoryPage(routeKey) {
         title: '청년예배',
         summary: '청년들이 함께 드리는 주일 예배입니다.',
         active: 'section-media-youth',
+        archiveRoute: 'media/archive/youth',
       })}
       ${mediaSection({
         id: 'section-media-praise',
@@ -2968,6 +3084,7 @@ function renderMediaCategoryPage(routeKey) {
         title: '찬양예배',
         summary: '찬양으로 함께 드리는 주일 오후 예배입니다.',
         active: 'section-media-praise',
+        archiveRoute: 'media/archive/praise',
       })}
       ${mediaSection({
         id: 'section-media-prayer',
@@ -2977,6 +3094,8 @@ function renderMediaCategoryPage(routeKey) {
         active: 'section-media-prayer',
         menu: ['전체', '수요기도회', '금요기도회', '새벽기도회'],
         categories: ['수요기도회', '금요기도회', '새벽기도회'],
+        archiveRoute: 'media/archive/prayer',
+        categoryRoutes: MEDIA_ARCHIVE_CATEGORY_ROUTES.prayer,
       })}
       ${mediaSection({
         id: 'section-media-choir',
@@ -2986,6 +3105,8 @@ function renderMediaCategoryPage(routeKey) {
         active: 'section-media-choir',
         menu: ['전체', '1부 브니엘', '2부 호산나', '3부 시온'],
         categories: ['1부 브니엘', '2부 호산나', '3부 시온'],
+        archiveRoute: 'media/archive/choir',
+        categoryRoutes: MEDIA_ARCHIVE_CATEGORY_ROUTES.choir,
       })}
       ${mediaSection({
         id: 'section-media-events',
@@ -2995,68 +3116,437 @@ function renderMediaCategoryPage(routeKey) {
         active: 'section-media-events',
         menu: ['전체', '집회', '행사', '기타'],
         categories: ['집회', '행사', '기타'],
+        archiveRoute: 'media/archive/events',
+        categoryRoutes: MEDIA_ARCHIVE_CATEGORY_ROUTES.events,
       })}
   `;
   return renderSubpageScaffold(routeKey, page, content);
 }
 
-function renderNewsBoardPage() {
-  const source = data.pages.news;
-  const page = getNavItem('news');
+function renderMediaArchivePage(routeKey) {
+  const archiveMap = {
+    'media/archive/sunday': {
+      title: '주일예배',
+      summary: '한 주간을 붙들고 살 말씀을 다시 확인하세요.',
+      parent: 'media',
+      categories: [],
+    },
+    'media/archive/youth': {
+      title: '청년예배',
+      summary: '청년들이 함께 드리는 예배 영상을 모았습니다.',
+      parent: 'media/youth',
+      categories: [],
+    },
+    'media/archive/praise': {
+      title: '찬양예배',
+      summary: '찬양으로 함께 드리는 주일 오후 예배를 확인하세요.',
+      parent: 'media/praise',
+      categories: [],
+    },
+    'media/archive/prayer': {
+      title: '기도회',
+      summary: '말씀과 기도로 한 주간을 준비하는 시간을 모았습니다.',
+      parent: 'media/prayer',
+      categories: ['전체', '수요기도회', '금요기도회', '새벽기도회'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.prayer,
+      activeCategory: '전체',
+    },
+    'media/archive/prayer/wednesday': {
+      title: '기도회',
+      summary: '수요기도회 영상을 모았습니다.',
+      parent: 'media/prayer',
+      categories: ['전체', '수요기도회', '금요기도회', '새벽기도회'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.prayer,
+      activeCategory: '수요기도회',
+    },
+    'media/archive/prayer/friday': {
+      title: '기도회',
+      summary: '금요기도회 영상을 모았습니다.',
+      parent: 'media/prayer',
+      categories: ['전체', '수요기도회', '금요기도회', '새벽기도회'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.prayer,
+      activeCategory: '금요기도회',
+    },
+    'media/archive/prayer/dawn': {
+      title: '기도회',
+      summary: '새벽기도회 영상을 모았습니다.',
+      parent: 'media/prayer',
+      categories: ['전체', '수요기도회', '금요기도회', '새벽기도회'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.prayer,
+      activeCategory: '새벽기도회',
+    },
+    'media/archive/choir': {
+      title: '찬양대',
+      summary: '하나님께 영광 돌리는 찬양대의 찬양입니다.',
+      parent: 'media/choir',
+      categories: ['전체', '1부 브니엘', '2부 호산나', '3부 시온'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.choir,
+      activeCategory: '전체',
+    },
+    'media/archive/choir/peniel': {
+      title: '찬양대',
+      summary: '1부 브니엘 찬양 영상을 모았습니다.',
+      parent: 'media/choir',
+      categories: ['전체', '1부 브니엘', '2부 호산나', '3부 시온'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.choir,
+      activeCategory: '1부 브니엘',
+    },
+    'media/archive/choir/hosanna': {
+      title: '찬양대',
+      summary: '2부 호산나 찬양 영상을 모았습니다.',
+      parent: 'media/choir',
+      categories: ['전체', '1부 브니엘', '2부 호산나', '3부 시온'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.choir,
+      activeCategory: '2부 호산나',
+    },
+    'media/archive/choir/zion': {
+      title: '찬양대',
+      summary: '3부 시온 찬양 영상을 모았습니다.',
+      parent: 'media/choir',
+      categories: ['전체', '1부 브니엘', '2부 호산나', '3부 시온'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.choir,
+      activeCategory: '3부 시온',
+    },
+    'media/archive/events': {
+      title: '집회 및 행사',
+      summary: '특별한 은혜와 기쁨의 시간들을 모았습니다.',
+      parent: 'media/events',
+      categories: ['전체', '집회', '행사', '기타'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.events,
+      activeCategory: '전체',
+    },
+    'media/archive/events/gathering': {
+      title: '집회 및 행사',
+      summary: '집회 영상을 모았습니다.',
+      parent: 'media/events',
+      categories: ['전체', '집회', '행사', '기타'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.events,
+      activeCategory: '집회',
+    },
+    'media/archive/events/event': {
+      title: '집회 및 행사',
+      summary: '행사 영상을 모았습니다.',
+      parent: 'media/events',
+      categories: ['전체', '집회', '행사', '기타'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.events,
+      activeCategory: '행사',
+    },
+    'media/archive/events/etc': {
+      title: '집회 및 행사',
+      summary: '기타 영상을 모았습니다.',
+      parent: 'media/events',
+      categories: ['전체', '집회', '행사', '기타'],
+      routeMap: MEDIA_ARCHIVE_CATEGORY_ROUTES.events,
+      activeCategory: '기타',
+    },
+  };
+  const config = archiveMap[routeKey] || archiveMap['media/archive/sunday'];
+  const page = {
+    title: config.title,
+    label: config.title,
+    summary: config.summary,
+  };
+  const renderBoardSearch = () => `
+    <form class="board-search" role="search" aria-label="${escapeHtml(config.title)} 검색">
+      <select aria-label="검색 범위">
+        <option>제목</option>
+        <option>제목 + 본문</option>
+      </select>
+      <label>
+        <span class="sr-only">${escapeHtml(config.title)} 검색어</span>
+        <input type="search" placeholder="검색어를 입력하세요">
+      </label>
+      <button type="button">검색</button>
+    </form>
+  `;
+  const renderPagination = () => `
+    <div class="news-pagination" aria-label="${escapeHtml(config.title)} 페이지 이동">
+      <span class="is-current">1</span>
+      <a href="${routeHref(routeKey)}">2</a>
+      <a href="${routeHref(routeKey)}">3</a>
+      <a href="${routeHref(routeKey)}">4</a>
+      <a href="${routeHref(routeKey)}">다음</a>
+    </div>
+  `;
+  const categoryPool = config.categories.length
+    ? (config.activeCategory && config.activeCategory !== '전체' ? [config.activeCategory] : config.categories.slice(1))
+    : [config.title];
+  const items = Array.from({ length: 12 }, (_, index) => {
+    const category = categoryPool[index % categoryPool.length] || config.title;
+    return {
+      category,
+      title: `${category} 영상 ${index + 1}`,
+      date: `2026.${String(4 - Math.floor(index / 4)).padStart(2, '0')}.${String(20 - index).padStart(2, '0')}`,
+    };
+  });
   const content = `
-      <section class="panel">
-        ${sectionTitle('News Board', '교회소식')}
-        <ul class="feed-list large">
-          ${source.churchNews.map((item) => `<li><span>${escapeHtml(item[0])}</span><time>${escapeHtml(item[1])}</time></li>`).join('')}
-        </ul>
+      <section class="church-landing-hero panel media-hero-panel">
+        <div class="church-landing-hero__media">${escapeHtml(config.title)} 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <span class="album-parent-label">말씀&찬양</span>
+          <h2>${escapeHtml(config.title)}</h2>
+          <div class="church-landing-hero__intro">
+            <p>${escapeHtml(config.summary)}</p>
+          </div>
+        </div>
+      </section>
+      <section class="panel media-archive-panel album-board-panel--direct">
+        ${config.categories.length ? `
+          ${renderMediaLineMenu(config.categories, {
+            activeLabel: config.activeCategory || config.categories[0],
+            routeMap: config.routeMap,
+            ariaLabel: `${config.title} 카테고리`,
+          })}
+        ` : ''}
+        <div class="media-archive-grid">
+          ${items.map((item) => `
+            <article class="media-video-card media-archive-card">
+              <div class="placeholder-box small">${escapeHtml(item.category)} 썸네일</div>
+              ${config.categories.length ? `<span class="media-video-category">${escapeHtml(item.category)}</span>` : ''}
+              <h3>${escapeHtml(item.title)}</h3>
+              <p>${escapeHtml(item.date)} / 영상 제목과 본문 요약이 들어가는 게시판 카드</p>
+            </article>
+          `).join('')}
+        </div>
+        ${renderBoardSearch()}
+        ${renderPagination()}
       </section>
   `;
-  return renderSubpageScaffold('news', page, content);
+  return renderSubpageScaffold(routeKey, page, content);
 }
 
-function renderBulletinPage() {
-  const page = getNavItem('news/bulletin');
-  const content = `
-      <section class="panel">
-        ${sectionTitle('Bulletin', '주보')}
-        <div class="grid grid-2">
-          <article class="card">
-            <div class="placeholder-box tall">최신 주보 PDF 미리보기</div>
-            <p>주보를 썸네일과 함께 바로 열어볼 수 있는 메인 프리뷰 블록</p>
-          </article>
-          <article class="card">
-            <h3>최신 주보 목록</h3>
-            <ul class="feed-list">
-              ${data.home.bulletinItems.map((item) => `<li><span>${escapeHtml(item.title)}</span><time>${escapeHtml(item.date)}</time></li>`).join('')}
-            </ul>
-          </article>
+function renderNewsLandingPage(activeRoute = 'news') {
+  const source = data.pages.news;
+  const page = getNavItem(activeRoute) || getNavItem('news');
+  const bulletinItems = data.home.bulletinItems || [];
+  const familyResources = source.resources.filter(([title]) => title.includes('가정예배'));
+  const otherResources = source.resources.filter(([title]) => !title.includes('가정예배'));
+  const renderBoardSearch = (label) => `
+    <form class="board-search" role="search" aria-label="${escapeHtml(label)} 검색">
+      <select aria-label="검색 범위">
+        <option>제목</option>
+        <option>제목 + 본문</option>
+      </select>
+      <label>
+        <span class="sr-only">${escapeHtml(label)} 검색어</span>
+        <input type="search" placeholder="검색어를 입력하세요">
+      </label>
+      <button type="button">검색</button>
+    </form>
+  `;
+  const renderPagination = (label) => `
+    <div class="news-pagination" aria-label="${escapeHtml(label)} 페이지 이동">
+      <span class="is-current">1</span>
+      <a href="${routeHref(activeRoute)}">2</a>
+      <a href="${routeHref(activeRoute)}">3</a>
+      <a href="${routeHref(activeRoute)}">4</a>
+      <a href="${routeHref(activeRoute)}">다음</a>
+    </div>
+  `;
+  const renderBoardRows = (items, options = {}) => `
+    <ul class="news-board-list ${options.compact ? 'is-compact' : ''}">
+      ${items.map((item) => {
+        const title = Array.isArray(item) ? item[0] : item.title;
+        const date = Array.isArray(item) ? item[1] : item.date;
+        const thumb = options.thumbnail ? `
+          <span class="news-board-thumb" aria-hidden="true">
+            <span>1면</span>
+            <span>2면</span>
+          </span>
+        ` : '';
+        return `
+          <li>
+            <a class="${options.thumbnail ? 'has-thumb' : ''}" href="${routeHref(activeRoute)}">
+              ${thumb}
+              <span class="news-board-title">${escapeHtml(title)}</span>
+              <time>${escapeHtml(date)}</time>
+            </a>
+          </li>
+        `;
+      }).join('')}
+    </ul>
+  `;
+  const renderHero = (title, summary) => `
+      <section class="church-landing-hero panel news-hero-panel">
+        <div class="church-landing-hero__media">${escapeHtml(title)} 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <span class="album-parent-label">교회소식</span>
+          <h2>${escapeHtml(title)}</h2>
+          <div class="church-landing-hero__intro">
+            <p>${escapeHtml(summary)}</p>
+          </div>
         </div>
       </section>
   `;
-  return renderSubpageScaffold('news/bulletin', page, content);
-}
-
-function renderResourcesPage() {
-  const source = data.pages.news;
-  const page = getNavItem('news/resources');
-  const content = `
-      <section class="panel">
-        ${sectionTitle('Resources', '자료실')}
-        <ul class="feed-list large">
-          ${source.resources.map((item) => `<li><span>${escapeHtml(item[0])}</span><time>${escapeHtml(item[1])}</time></li>`).join('')}
-        </ul>
-      </section>
-      <section class="panel">
-        ${sectionTitle('Note', '자료실 구성 메모')}
-        <article class="card">
-          <p>${escapeHtml(source.bulletinNote)}</p>
+  const renderBoardPage = (title, summary, items, label) => `
+      ${renderHero(title, summary)}
+      <section class="panel news-section-panel album-board-panel album-board-panel--direct">
+        <article class="news-board-card">
+          ${renderBoardRows(items)}
+          ${renderBoardSearch(label)}
+          ${renderPagination(label)}
         </article>
       </section>
   `;
-  return renderSubpageScaffold('news/resources', page, content);
+  let content = '';
+  if (activeRoute === 'news/bulletin') {
+    content = `
+      ${renderHero('주보', '금주 주보를 편하게 바로 확인하세요.')}
+      <section class="panel news-section-panel album-board-panel album-board-panel--direct">
+        <article class="news-board-card">
+          ${renderBoardRows(bulletinItems, { thumbnail: true })}
+          ${renderBoardSearch('주보')}
+          ${renderPagination('주보')}
+        </article>
+      </section>
+    `;
+  } else if (activeRoute === 'news/family-worship') {
+    content = renderBoardPage('가정예배 순서지', '가정에서 드리는 예배 순서지 입니다.', familyResources, '가정예배 순서지');
+  } else if (activeRoute === 'news/resources') {
+    content = renderBoardPage('자료실', '기타 교회 각종 자료들을 보실수 있습니다.', otherResources.length ? otherResources : source.resources, '자료실');
+  } else {
+    content = renderBoardPage('교회소식', '이번 주 일정과 안내를 확인하세요.', source.churchNews, '교회소식');
+  }
+  return renderSubpageScaffold(activeRoute, page, content);
+}
+
+function renderNewsSubMainPage(activeRoute = 'news') {
+  const source = data.pages.news;
+  const page = getNavItem(activeRoute) || getNavItem('news');
+  const bulletinItems = data.home.bulletinItems || [];
+  const albumItems = data.home.albumItems || [];
+  const familyResources = source.resources.filter(([title]) => title.includes('가정예배'));
+  const otherResources = source.resources.filter(([title]) => !title.includes('가정예배'));
+  const newsNavItems = [
+    ['section-news-board', '교회소식'],
+    ['section-news-bulletin', '주보'],
+    ['section-news-family', '가정예배 순서지'],
+    ['section-news-album', '교회앨범'],
+    ['section-news-resources', '기타 자료실'],
+  ];
+  const renderRows = (items, options = {}) => `
+    <ul class="news-board-list ${options.compact ? 'is-compact' : ''}">
+      ${items.map((item) => {
+        const title = Array.isArray(item) ? item[0] : item.title;
+        const date = Array.isArray(item) ? item[1] : item.date;
+        const thumb = options.thumbnail ? `
+          <span class="news-board-thumb" aria-hidden="true">
+            <span>1면</span>
+            <span>2면</span>
+          </span>
+        ` : '';
+        return `
+          <li>
+            <a class="${options.thumbnail ? 'has-thumb' : ''}" href="${routeHref(options.href || 'news')}">
+              ${thumb}
+              <span class="news-board-title">${escapeHtml(title)}</span>
+              <time>${escapeHtml(date)}</time>
+            </a>
+          </li>
+        `;
+      }).join('')}
+    </ul>
+  `;
+  const content = `
+      <section id="section-news-intro" class="church-landing-hero panel news-hero-panel">
+        <div class="church-landing-hero__media">교회소식 대표 이미지 영역</div>
+        <div class="church-landing-hero__copy">
+          <span class="eyebrow">SEC-01</span>
+          <h2>교회 소식</h2>
+          <div class="church-landing-hero__intro">
+            <p>이번 주 꼭 확인하실 소식을 모았습니다.</p>
+          </div>
+        </div>
+      </section>
+      <section id="section-news-board" class="panel news-section-panel">
+        ${sectionTitle('SEC-02', '교회소식', '이번 주 일정과 안내를 확인하세요.')}
+        ${sectionNavigator('', newsNavItems, 'section-news-board', 'news', '교회소식 섹션 이동')}
+        <article class="news-board-card">
+          ${renderRows(source.churchNews)}
+          <div class="button-row centered news-more-row">
+            <a class="button button-secondary" href="${routeHref('news/board')}">전체보기</a>
+          </div>
+        </article>
+      </section>
+      <section id="section-news-bulletin" class="panel news-section-panel">
+        ${sectionTitle('SEC-03', '주보', '금주 주보를 편하게 바로 확인하세요.')}
+        ${sectionNavigator('', newsNavItems, 'section-news-bulletin', 'news', '교회소식 섹션 이동')}
+        <article class="news-board-card">
+          ${renderRows(bulletinItems, { thumbnail: true, href: 'news/bulletin' })}
+          <div class="button-row centered news-more-row">
+            <a class="button button-secondary" href="${routeHref('news/bulletin')}">전체보기</a>
+          </div>
+        </article>
+      </section>
+      <section id="section-news-family" class="panel news-section-panel">
+        ${sectionTitle('SEC-04', '가정예배 순서지', '가정에서 드리는 예배 순서지 입니다.')}
+        ${sectionNavigator('', newsNavItems, 'section-news-family', 'news', '교회소식 섹션 이동')}
+        <article class="news-board-card">
+          ${renderRows(familyResources)}
+          <div class="button-row centered news-more-row">
+            <a class="button button-secondary" href="${routeHref('news/family-worship')}">전체보기</a>
+          </div>
+        </article>
+      </section>
+      <section id="section-news-album" class="panel news-section-panel">
+        ${sectionTitle('SEC-05', '교회앨범', '번동제일교회의 소중한 순간들을 함께 나눕니다.')}
+        ${sectionNavigator('', newsNavItems, 'section-news-album', 'news', '교회소식 섹션 이동')}
+        <div class="media-line-menu news-album-menu" aria-label="교회앨범 카테고리">
+          ${ALBUM_CATEGORIES.map((item, index) => `<a class="${index === 0 ? 'is-active' : ''}" href="${routeHref(albumCategoryRoute(item))}">${escapeHtml(item)}</a>`).join('')}
+        </div>
+        <div class="news-album-grid">
+          ${albumItems.slice(0, 6).map((item) => `
+            <article class="news-album-card">
+              <div class="placeholder-box small">사진</div>
+              <h3>${escapeHtml(item.title)}</h3>
+              <span class="meta">${escapeHtml(item.date)}</span>
+            </article>
+          `).join('')}
+        </div>
+        <div class="button-row centered news-more-row">
+          <a class="button button-secondary" href="${routeHref('news/album')}">전체보기</a>
+        </div>
+      </section>
+      <section id="section-news-resources" class="panel news-section-panel">
+        ${sectionTitle('SEC-06', '자료실', '기타 교회 각종 자료들을 보실수 있습니다.')}
+        ${sectionNavigator('', newsNavItems, 'section-news-resources', 'news', '교회소식 섹션 이동')}
+        <article class="news-board-card">
+          ${renderRows(otherResources.length ? otherResources : source.resources)}
+          <div class="button-row centered news-more-row">
+            <a class="button button-secondary" href="${routeHref('news/resources')}">전체보기</a>
+          </div>
+        </article>
+      </section>
+  `;
+  return renderSubpageScaffold(activeRoute, page, content);
+}
+
+function renderNewsBoardPage() {
+  return renderNewsSubMainPage('news');
+}
+
+function renderNewsBoardArchivePage() {
+  return renderNewsLandingPage('news/board');
+}
+
+function renderBulletinPage() {
+  return renderNewsLandingPage('news/bulletin');
+}
+
+function renderFamilyWorshipPage() {
+  return renderNewsLandingPage('news/family-worship');
+}
+
+function renderResourcesPage() {
+  return renderNewsLandingPage('news/resources');
 }
 
 function renderRouteDraft(key) {
+  if (String(key || '').startsWith('news/album/category/') || String(key || '').startsWith('album/category/')) {
+    return renderAlbum(key);
+  }
   switch (key) {
     case 'home':
       return renderHome();
@@ -3090,6 +3580,22 @@ function renderRouteDraft(key) {
     case 'worship/shuttle':
       pendingScrollTarget = getLandingScrollTarget(key);
       return renderWorshipShuttlePage();
+    case 'media/archive/sunday':
+    case 'media/archive/youth':
+    case 'media/archive/praise':
+    case 'media/archive/prayer':
+    case 'media/archive/prayer/wednesday':
+    case 'media/archive/prayer/friday':
+    case 'media/archive/prayer/dawn':
+    case 'media/archive/choir':
+    case 'media/archive/choir/peniel':
+    case 'media/archive/choir/hosanna':
+    case 'media/archive/choir/zion':
+    case 'media/archive/events':
+    case 'media/archive/events/gathering':
+    case 'media/archive/events/event':
+    case 'media/archive/events/etc':
+      return renderMediaArchivePage(key);
     case 'media':
     case 'media/youth':
     case 'media/praise':
@@ -3104,8 +3610,14 @@ function renderRouteDraft(key) {
       return renderMediaCategoryPage(key);
     case 'news':
       return renderNewsBoardPage();
+    case 'news/board':
+      return renderNewsBoardArchivePage();
     case 'news/bulletin':
       return renderBulletinPage();
+    case 'news/family-worship':
+      return renderFamilyWorshipPage();
+    case 'news/album':
+      return renderAlbum('news/album');
     case 'news/resources':
       return renderResourcesPage();
     case 'album':
@@ -3243,6 +3755,15 @@ function bindUi() {
       event.preventDefault();
       const target = document.getElementById(targetId);
       const nextHash = link.getAttribute('href') || '';
+      if (!target) {
+        pendingScrollTarget = targetId;
+        if (nextHash && nextHash !== window.location.hash) {
+          window.location.hash = nextHash.replace(/^#/, '');
+        } else {
+          window.setTimeout(scrollToPendingTarget, 0);
+        }
+        return;
+      }
       if (nextHash && nextHash !== window.location.hash) {
         window.history.pushState(null, '', nextHash);
         document.querySelectorAll(`a[href="${nextHash}"]`).forEach((currentLink) => currentLink.classList.add('is-current'));
@@ -3256,10 +3777,6 @@ function bindUi() {
         pendingScrollTarget = targetId;
         window.setTimeout(scrollToPendingTarget, 0);
         return;
-      }
-      pendingScrollTarget = targetId;
-      if (nextHash) {
-        window.location.hash = nextHash.replace(/^#/, '');
       }
     });
   });
@@ -3310,6 +3827,9 @@ function renderLegacy() {
 }
 
 function renderRoute(key) {
+  if (String(key || '').startsWith('news/album/category/') || String(key || '').startsWith('album/category/')) {
+    return renderAlbum(key);
+  }
   switch (key) {
     case 'home':
       return renderHome();
@@ -3343,6 +3863,22 @@ function renderRoute(key) {
     case 'worship/shuttle':
       pendingScrollTarget = getLandingScrollTarget(key);
       return renderWorshipShuttlePage();
+    case 'media/archive/sunday':
+    case 'media/archive/youth':
+    case 'media/archive/praise':
+    case 'media/archive/prayer':
+    case 'media/archive/prayer/wednesday':
+    case 'media/archive/prayer/friday':
+    case 'media/archive/prayer/dawn':
+    case 'media/archive/choir':
+    case 'media/archive/choir/peniel':
+    case 'media/archive/choir/hosanna':
+    case 'media/archive/choir/zion':
+    case 'media/archive/events':
+    case 'media/archive/events/gathering':
+    case 'media/archive/events/event':
+    case 'media/archive/events/etc':
+      return renderMediaArchivePage(key);
     case 'media':
     case 'media/youth':
     case 'media/praise':
@@ -3357,8 +3893,14 @@ function renderRoute(key) {
       return renderMediaCategoryPage(key);
     case 'news':
       return renderNewsBoardPage();
+    case 'news/board':
+      return renderNewsBoardArchivePage();
     case 'news/bulletin':
       return renderBulletinPage();
+    case 'news/family-worship':
+      return renderFamilyWorshipPage();
+    case 'news/album':
+      return renderAlbum('news/album');
     case 'news/resources':
       return renderResourcesPage();
     case 'album':

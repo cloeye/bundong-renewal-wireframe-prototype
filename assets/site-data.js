@@ -45,16 +45,16 @@ window.BUNDONG_WIREFRAME_DATA = {
     {
       key: 'news',
       label: '교회소식',
-      items: ['교회소식', '주보', '자료실'],
+      items: ['교회소식', '주보', '가정예배 순서지', '교회앨범', '기타 자료실'],
     },
   ],
   quickLinks: [
     { label: '예배시간', route: 'worship' },
-    { label: '차량운행', route: 'worship' },
-    { label: '오시는 길', route: 'newcomers' },
+    { label: '차량운행', route: 'worship/shuttle' },
+    { label: '오시는 길', route: 'church/directions' },
     { label: '새가족 안내', route: 'newcomers' },
-    { label: '주보', route: 'news' },
-    { label: '가정예배 순서지', route: 'news' },
+    { label: '주보', route: 'news/bulletin' },
+    { label: '가정예배 순서지', route: 'news/family-worship' },
   ],
   currentSitemap: [
     {
@@ -181,10 +181,10 @@ window.BUNDONG_WIREFRAME_DATA = {
       { title: '2026/03/08 교회소식', date: '03.06' },
     ],
     bulletinItems: [
-      { title: '2026년 4월 가정예배 순서지', date: '03.31' },
-      { title: '2026년 3월 가정예배순서지', date: '02.25' },
-      { title: '2026년 2월 가정예배순서지', date: '02.25' },
-      { title: '2026년도 번동제일교회 장학생 선발공고', date: '02.19' },
+      { title: '2026년 4월 19일 주보', date: '04.19' },
+      { title: '2026년 4월 12일 주보', date: '04.12' },
+      { title: '2026년 4월 5일 주보', date: '04.05' },
+      { title: '2026년 3월 29일 주보', date: '03.29' },
     ],
     facilities: [
       { title: '본관', detail: 'B1 식당·주방 / 1F 사무실·영아부 / 2F 카페헤븐 / 3F 중예배실 / 4F 본당 / 5F 당회실 / 6F 본당 상부' },
@@ -385,11 +385,12 @@ window.BUNDONG_WIREFRAME_DATA = {
     news: {
       title: '교회소식',
       summary:
-        '교회소식, 최신 주보, 자료형 게시물을 분리해 실무 정보의 최신성과 접근성을 높이는 게시판형 랜딩입니다.',
+        '교회소식, 최신 주보, 가정예배 순서지, 교회앨범, 기타 자료실을 분리해 실무 정보의 최신성과 접근성을 높이는 게시판형 랜딩입니다.',
       sources: [
         '/iboard/board.html?code=bbs_001',
         '/iboard/board.html?code=ib_weekly',
         '/iboard/board.html?code=bbs_002',
+        '/iboard/board.html?code=bbs_resources',
       ],
       churchNews: [
         ['2026/03/29 교회소식', '03.27'],
@@ -413,14 +414,18 @@ window.BUNDONG_WIREFRAME_DATA = {
         '현재 사이트의 포토 갤러리 중심 운영을 유지하되, 예배·행사·교육·친교 사진이 균형 있게 보이는 카드형 앨범 랜딩입니다.',
       sources: ['/iboard/board.html?code=bbs_photo', '/iboard/board.html?code=bbs_video'],
       items: [
-        ['테스트', '11.25'],
-        ['세례예식', '03.12'],
-        ['제13회 용천노회 어린이..', '03.16'],
-        ['어린이주일 유아세례예..', '12.25'],
-        ['세례예식', '08.27'],
-        ['신생아 윤재하아기', '05.11'],
-        ['주차장 기공예배 및 기공..', '08.20'],
-        ['성탄예배 유아세례 및 ..', '07.14'],
+        ['테스트', '11.25', '기타사진'],
+        ['세례예식', '03.12', '세례예식'],
+        ['제13회 용천노회 어린이..', '03.16', '교회학교'],
+        ['어린이주일 유아세례예..', '12.25', '세례예식'],
+        ['세례예식', '08.27', '세례예식'],
+        ['신생아 윤재하아기', '05.11', '기타사진'],
+        ['주차장 기공예배 및 기공..', '08.20', '행사/집회'],
+        ['성탄예배 유아세례 및 ..', '07.14', '예배찬양'],
+        ['창립주일 감사예배', '07.07', '예배찬양'],
+        ['교회학교 여름성경학교', '06.30', '교회학교'],
+        ['청년부 수련회', '06.23', '행사/집회'],
+        ['국내선교 봉사활동', '06.16', '국내선교'],
       ],
       notes: [
         '기존 동영상게시판은 교회앨범의 보조 탭 또는 연결 링크로 수용 가능',
