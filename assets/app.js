@@ -349,6 +349,38 @@ function renderMegaMenu() {
   `;
 }
 
+function renderMobileDrawer(activeKey) {
+  return `
+    <div class="mobile-nav-overlay" data-mobile-close hidden></div>
+    <aside id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="모바일 전체 메뉴" aria-hidden="true">
+      <div class="mobile-nav-drawer__head">
+        <div>
+          <strong>전체 메뉴</strong>
+          <span>번동제일교회</span>
+        </div>
+        <button class="mobile-nav-close" type="button" data-mobile-close aria-label="메뉴 닫기">닫기</button>
+      </div>
+      <div class="mobile-nav-drawer__body">
+        ${NAV_STRUCTURE.map((group) => `
+          <section class="mobile-nav-group ${group.key === activeKey ? 'is-current' : ''}">
+            <h3>${escapeHtml(group.label)}</h3>
+            <div class="mobile-nav-links">
+              ${(group.items || []).map((item) => `
+                <a class="${getActiveNavKey(routeKey()) === item.route ? 'is-current' : ''}" href="${routeHref(item.route)}">
+                  ${escapeHtml(item.label)}
+                </a>
+              `).join('')}
+            </div>
+          </section>
+        `).join('')}
+      </div>
+      <div class="mobile-nav-drawer__foot">
+        ${renderUtilityMenu()}
+      </div>
+    </aside>
+  `;
+}
+
 function renderHeader(activeKey) {
   return `
     <header class="site-header">
@@ -365,13 +397,17 @@ function renderHeader(activeKey) {
             <small>since 1964.7.3.</small>
           </span>
         </a>
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">메뉴</button>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span class="menu-toggle__bars" aria-hidden="true"></span>
+          <span>메뉴</span>
+        </button>
         <nav id="main-nav" class="main-nav">
           ${renderMainNav(activeKey)}
         </nav>
       </div>
       ${renderMegaMenu()}
     </header>
+    ${renderMobileDrawer(activeKey)}
   `;
 }
 
@@ -3678,11 +3714,31 @@ function bindUi() {
   const nav = document.getElementById('main-nav');
   const header = document.querySelector('.site-header');
   const mega = document.querySelector('.mega-menu');
-  if (menuToggle && nav) {
+  const mobileDrawer = document.getElementById('mobile-nav-drawer');
+  const mobileOverlay = document.querySelector('.mobile-nav-overlay');
+  const mobileCloseTriggers = document.querySelectorAll('[data-mobile-close]');
+  const setMobileMenu = (open) => {
+    if (!menuToggle || !mobileDrawer || !mobileOverlay) {
+      return;
+    }
+    menuToggle.setAttribute('aria-expanded', String(open));
+    mobileDrawer.setAttribute('aria-hidden', String(!open));
+    mobileDrawer.classList.toggle('is-open', open);
+    mobileOverlay.hidden = !open;
+    mobileOverlay.classList.toggle('is-open', open);
+    document.body.classList.toggle('is-mobile-menu-open', open);
+  };
+
+  if (menuToggle && mobileDrawer) {
     menuToggle.addEventListener('click', () => {
       const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-      menuToggle.setAttribute('aria-expanded', String(!expanded));
-      nav.classList.toggle('is-open', !expanded);
+      setMobileMenu(!expanded);
+    });
+    mobileCloseTriggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => setMobileMenu(false));
+    });
+    mobileDrawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setMobileMenu(false));
     });
   }
 
@@ -3735,6 +3791,7 @@ function bindUi() {
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         closeMega();
+        setMobileMenu(false);
       }
     });
   }
@@ -3782,18 +3839,38 @@ function bindUi() {
   });
 }
 
-function scrollToPendingTarget() {
-  if (!pendingScrollTarget) {
+function scrollToTargetId(targetId, behavior = 'smooth') {
+  if (!targetId) {
     return;
   }
-  const target = document.getElementById(pendingScrollTarget);
+  const target = document.getElementById(targetId);
   if (!target) {
     return;
   }
   const headerOffset = (document.querySelector('.site-header')?.offsetHeight || 0) + 14;
   const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+  window.scrollTo({ top, behavior });
+}
+
+function scrollToPendingTarget(behavior = 'smooth') {
+  if (!pendingScrollTarget) {
+    return;
+  }
+  const targetId = pendingScrollTarget;
   pendingScrollTarget = null;
-  window.scrollTo({ top, behavior: 'smooth' });
+  scrollToTargetId(targetId, behavior);
+}
+
+function schedulePendingScroll(behavior = 'smooth') {
+  if (!pendingScrollTarget) {
+    return;
+  }
+  const targetId = pendingScrollTarget;
+  pendingScrollTarget = null;
+  const run = () => scrollToTargetId(targetId, behavior);
+  window.requestAnimationFrame(run);
+  window.setTimeout(run, 120);
+  window.setTimeout(run, 360);
 }
 
 
@@ -3933,7 +4010,7 @@ function render() {
     pendingScrollTarget = directTarget;
   }
   if (pendingScrollTarget) {
-    window.setTimeout(scrollToPendingTarget, 0);
+    schedulePendingScroll('auto');
   } else if (previousKey && previousKey !== key) {
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);
   }
