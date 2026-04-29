@@ -10928,3 +10928,219 @@ dd {
     padding: 0 12px !important;
   }
 }
+
+/* Mobile detail polish: tighter Korean typography, calmer section rhythm, and clearer image-to-title spacing. */
+@media (max-width: 900px) {
+  body {
+    font-size: 15px !important;
+    line-height: 1.58 !important;
+    letter-spacing: 0 !important;
+  }
+
+  body * {
+    letter-spacing: 0 !important;
+  }
+
+  .home-shell section,
+  .subpage-content > .panel,
+  .subpage-content > .panel:first-child,
+  .subpage-content > .panel:last-child {
+    padding-top: 34px !important;
+    padding-bottom: 34px !important;
+  }
+
+  .home-hero {
+    padding-top: 36px !important;
+    padding-bottom: 36px !important;
+  }
+
+  .home-sec-label,
+  .subpage-category-path,
+  .eyebrow,
+  .media-video-category {
+    margin-bottom: 14px !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    font-weight: 850 !important;
+  }
+
+  .home-hero__copy,
+  .home-intro__copy,
+  .church-landing-hero__copy,
+  .section-head,
+  .subpage-hero__copy {
+    max-width: 100% !important;
+  }
+
+  .home-hero__copy h1 {
+    margin-bottom: 12px !important;
+    font-size: 30px !important;
+    line-height: 1.24 !important;
+    font-weight: 950 !important;
+  }
+
+  .home-hero__lead,
+  .home-hero__desc,
+  .home-intro__copy p,
+  .home-section-head p,
+  .section-head p,
+  .church-landing-hero__copy p,
+  .card p {
+    font-size: 14px !important;
+    line-height: 1.64 !important;
+  }
+
+  .home-hero__lead {
+    margin-bottom: 7px !important;
+    font-weight: 850 !important;
+  }
+
+  .home-hero__desc {
+    max-width: 31em;
+  }
+
+  .home-hero__media,
+  .home-intro__media,
+  .church-landing-hero__media,
+  .placeholder-box,
+  .organization-photo,
+  .facility-overview__media,
+  .facility-cafe-photo,
+  .directions-map-placeholder {
+    border-radius: 10px !important;
+  }
+
+  .home-hero__media {
+    margin-top: 24px !important;
+  }
+
+  .home-hero__dots {
+    margin-top: 16px !important;
+  }
+
+  .home-section-head {
+    margin-bottom: 18px !important;
+  }
+
+  .home-section-head h2,
+  .home-intro__copy h2,
+  .subpage-content .section-head h2,
+  .church-landing-hero__copy h2,
+  .subpage-hero__copy h1,
+  .home-news__panel h2 {
+    margin-bottom: 10px !important;
+    font-size: 27px !important;
+    line-height: 1.26 !important;
+    font-weight: 950 !important;
+  }
+
+  .home-quick__grid {
+    gap: 8px !important;
+  }
+
+  .home-quick__item {
+    min-height: 52px !important;
+    gap: 8px !important;
+    border-radius: 9px !important;
+    font-size: 14px !important;
+    line-height: 1.25 !important;
+  }
+
+  .home-worship__card,
+  .home-album__card,
+  .home-sermons__info,
+  .home-sermons__subitem,
+  .home-news__panel,
+  .home-facility__card,
+  .home-directions__info,
+  .worship-now-card,
+  .worship-mini-card,
+  .worship-school-card,
+  .news-board-card,
+  .news-pdf-card,
+  .news-album-card,
+  .media-video-card,
+  .media-feature-card,
+  .facility-visit-card,
+  .organization-age-card,
+  .card {
+    padding: 16px !important;
+  }
+
+  .home-worship__card h3,
+  .home-album__card h3,
+  .home-sermons__info h3,
+  .home-sermons__subitem h3,
+  .home-facility__card h3,
+  .media-video-card h3,
+  .media-feature-card h3,
+  .news-album-card h3,
+  .worship-school-card h3,
+  .card h3 {
+    margin-top: 13px !important;
+    margin-bottom: 7px !important;
+    font-size: 17px !important;
+    line-height: 1.34 !important;
+    font-weight: 900 !important;
+  }
+
+  .home-worship__media + h3,
+  .placeholder-box + h3,
+  .organization-photo + strong,
+  .facility-overview__media + .facility-overview__body {
+    margin-top: 14px !important;
+  }
+
+  .home-album__categories,
+  .media-line-menu,
+  .subpage-line-tabs__inner,
+  .section-navigator nav {
+    gap: 8px !important;
+  }
+
+  .home-album__category,
+  .media-line-menu a,
+  .subpage-line-tabs a,
+  .section-navigator a {
+    min-height: 36px !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+
+  .button,
+  .button-secondary,
+  .organization-cafe-link {
+    min-height: 42px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 16px !important;
+    border-radius: 999px !important;
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+  }
+
+  .mobile-nav-drawer__head {
+    padding-top: 22px !important;
+    padding-bottom: 17px !important;
+  }
+
+  .mobile-nav-group {
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+  }
+
+  .mobile-nav-links {
+    gap: 8px !important;
+  }
+
+  .mobile-nav-links a {
+    min-height: 44px !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+    font-size: 14px !important;
+    line-height: 1.25 !important;
+  }
+}

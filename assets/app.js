@@ -2219,8 +2219,8 @@ function renderChurchOrganizationPage() {
     ['사회부', '부장 조계완 장로 / 안수집사 김경호 김승식 노성래 박성종 서정근 서춘석 이성규A 임형진 정영권 최재훈 / 권사 김성미 김선희A 박향덕 양경미 오선숙 이동순 장경숙 조국상 조현숙 채수남 최영희 / 집사 강세미 권희옥 안해란 전미라 함수정'],
   ];
   const education = [
-    ['영아부', '0세-3세 / 주일 09:30 / 본관 영아부실', 'https://cafe.naver.com/bundonginfant'],
-    ['유아부', '4세-5세 / 주일 09:30 / 교육관 유아부실', 'https://cafe.daum.net/bundongbaby'],
+    ['영아부', '0세-3세 / 주일 09:30 / 본관 영아부실', 'worship/school'],
+    ['유아부', '4세-5세 / 주일 09:30 / 교육관 유아부실', 'worship/school'],
     ['유치부', '6세-7세 / 주일 09:30 / 교육관 유치부실'],
     ['유년부', '초등 1-3학년 / 주일 09:30 / 유년부실'],
     ['초등부', '초등 4-6학년 / 주일 09:30 / 초등부실'],
@@ -2386,7 +2386,7 @@ function renderChurchOrganizationPage() {
               <div class="organization-photo is-small">${escapeHtml(title)} 사진 영역</div>
               <strong>${escapeHtml(title)}</strong>
               <span>${escapeHtml(detail)}</span>
-              ${href ? `<a class="organization-cafe-link" href="${escapeHtml(href)}" target="_blank" rel="noopener">카페 바로가기</a>` : ''}
+              ${href ? `<a class="organization-cafe-link" href="${routeHref(href)}">교회학교 와이어프레임 보기</a>` : ''}
             </article>
           `).join('')}
         </div>
@@ -2621,7 +2621,7 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
           `).join('')}
         </div>
         <div class="button-row centered">
-          <a class="button button-secondary" href="http://www.bundong.com/iboard/board.html?code=bbs_nfwp">새가족환영회 게시판 더보기</a>
+          <a class="button button-secondary" href="${routeHref('newcomers/welcome-party')}">새가족환영회 게시판 더보기</a>
         </div>
       </section>
       <section id="section-newcomers-weekly-family" class="panel newcomers-weekly-panel">
@@ -2641,7 +2641,7 @@ function renderNewcomerGreetingPage(activeRoute = 'newcomers') {
           `).join('')}
         </div>
         <div class="button-row centered">
-          <a class="button button-secondary" href="http://www.bundong.com/iboard/board.html?code=bbs_nf">금주의 새가족 게시판 더보기</a>
+          <a class="button button-secondary" href="${routeHref('newcomers/weekly-family')}">금주의 새가족 게시판 더보기</a>
         </div>
       </section>
   `;
